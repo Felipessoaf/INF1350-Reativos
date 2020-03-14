@@ -1,3 +1,9 @@
+/*
+Nome: Felipe Pessoa e Guilherme Bizzo
+Matricula: 1411716 e 1710563
+
+*/
+
 #include "pindefs.h"
 
 int state = 1;
@@ -6,7 +12,7 @@ int acertou = 0;
 
 unsigned long previousMillis = 0;
 unsigned long interval = 500;
-unsigned long ledInterval = 500;
+unsigned long ledInterval = 1000;
 
 int sequenciaResposta[5];
 int sequenciaUsuario[5];
@@ -18,10 +24,14 @@ void setup() {
   pinMode(KEY1, INPUT_PULLUP);
   pinMode(KEY2, INPUT_PULLUP);
   pinMode(KEY3, INPUT_PULLUP);
+  RestartSequence();
+  randomSeed(analogRead(0));
+  Serial.begin(9600);
 }
 
 void loop () {
   unsigned long currentMillis = millis();
+  
 
   switch (state) {
     case 1:
@@ -34,6 +44,8 @@ void loop () {
         digitalWrite(randLed, LOW);
         delay(ledInterval);
         digitalWrite(randLed, HIGH);
+        delay(ledInterval);
+        Serial.println(randLed);
 
         //salvando na sequencia e aumentando contador
         sequenciaResposta[countSequencia] = randLed;
@@ -42,6 +54,9 @@ void loop () {
       else {
         state = 2;
         countSequencia = 0;
+        digitalWrite(LED1, HIGH);
+        digitalWrite(LED2, HIGH);
+        digitalWrite(LED3, HIGH);
       }
       break;
     case 2:
@@ -52,33 +67,39 @@ void loop () {
 
           if (digitalRead(KEY1) == LOW) {
             //salvando na sequencia e aumentando contador
-            sequenciaUsuario[countSequencia] = KEY1;
-            countSequencia++;
+            sequenciaUsuario[countSequencia] = LED1;
+            Serial.println("Usuario apertou 1");
+            Serial.println(sequenciaResposta[countSequencia]);
 
             if (sequenciaUsuario[countSequencia] != sequenciaResposta[countSequencia]) {
               state = 3;
               acertou = 0;
             }
+            countSequencia++;
           }
           if (digitalRead(KEY2) == LOW) {
             //salvando na sequencia e aumentando contador
-            sequenciaUsuario[countSequencia] = KEY2;
-            countSequencia++;
+            sequenciaUsuario[countSequencia] = LED2;
+            Serial.println("Usuario apertou 2");
+            Serial.println(sequenciaResposta[countSequencia]);
 
             if (sequenciaUsuario[countSequencia] != sequenciaResposta[countSequencia]) {
               state = 3;
               acertou = 0;
             }
+            countSequencia++;
           }
           if (digitalRead(KEY3) == LOW) {
             //salvando na sequencia e aumentando contador
-            sequenciaUsuario[countSequencia] = KEY3;
-            countSequencia++;
+            sequenciaUsuario[countSequencia] = LED3;
+            Serial.println("Usuario apertou 3");
+            Serial.println(sequenciaResposta[countSequencia]);
 
             if (sequenciaUsuario[countSequencia] != sequenciaResposta[countSequencia]) {
               state = 3;
               acertou = 0;
             }
+            countSequencia++;
           }
         }
       }
@@ -90,10 +111,10 @@ void loop () {
       break;
     case 3:
       //mostra resultados
-      digitalWrite(LED1, HIGH);
+      digitalWrite(LED1, LOW);
       if (acertou) {
-        digitalWrite(LED2, HIGH);
-        digitalWrite(LED3, HIGH);
+        digitalWrite(LED2, LOW);
+        digitalWrite(LED3, LOW);
       }
 
       //input para resetar
@@ -110,31 +131,14 @@ void loop () {
       break;
   }
 
-  /*  if (currentMillis >= old + ledInterval and canBlink) { // hora de piscar?
-      old = currentMillis;
-      ledOn = !ledOn;
-      digitalWrite(LED1, ledOn);
-    }
-
-    if (currentMillis - previousMillis >= interval) {
-      previousMillis = currentMillis;
-
-      if (digitalRead(KEY1) == LOW and ledInterval > minimo) {
-        ledInterval = ledInterval / 2;
-      }
-      if (digitalRead(KEY2) == LOW and ledInterval < maximo) {
-        ledInterval = ledInterval * 2;
-      }
-      if (digitalRead(KEY1) == LOW and digitalRead(KEY2) == LOW) {
-        canBlink = !canBlink;
-      }
-    }*/
+  
 }
 
 void RestartSequence() {
   state = 1;
   countSequencia = 0;
   acertou = 1;
+  Serial.println("Resetando sequencia");
   digitalWrite(LED1, HIGH);
   digitalWrite(LED2, HIGH);
   digitalWrite(LED3, HIGH);
