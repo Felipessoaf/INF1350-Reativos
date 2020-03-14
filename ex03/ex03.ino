@@ -9,6 +9,7 @@ unsigned long minimo = 125;
 unsigned long maximo = 1000;
 
 //teste
+//outro teste
 
 void setup() {
   pinMode(LED1, OUTPUT);;
