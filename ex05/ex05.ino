@@ -1,6 +1,6 @@
 /*
-Nome: Felipe Pessoa e Guilherme Bizzo
-Matricula: 1411716 e 1710563
+  Nome: Felipe Pessoa e Guilherme Bizzo
+  Matricula: 1411716 e 1710563
 
 */
 
@@ -31,7 +31,7 @@ void setup() {
 
 void loop () {
   unsigned long currentMillis = millis();
-  
+
 
   switch (state) {
     case 1:
@@ -66,40 +66,14 @@ void loop () {
           previousMillis = currentMillis;
 
           if (digitalRead(KEY1) == LOW) {
-            //salvando na sequencia e aumentando contador
-            sequenciaUsuario[countSequencia] = LED1;
-            Serial.println("Usuario apertou 1");
-            Serial.println(sequenciaResposta[countSequencia]);
-
-            if (sequenciaUsuario[countSequencia] != sequenciaResposta[countSequencia]) {
-              state = 3;
-              acertou = 0;
-            }
-            countSequencia++;
+            checkSequencia(LED1);
           }
           if (digitalRead(KEY2) == LOW) {
-            //salvando na sequencia e aumentando contador
-            sequenciaUsuario[countSequencia] = LED2;
-            Serial.println("Usuario apertou 2");
-            Serial.println(sequenciaResposta[countSequencia]);
+            checkSequencia(LED2);
 
-            if (sequenciaUsuario[countSequencia] != sequenciaResposta[countSequencia]) {
-              state = 3;
-              acertou = 0;
-            }
-            countSequencia++;
           }
           if (digitalRead(KEY3) == LOW) {
-            //salvando na sequencia e aumentando contador
-            sequenciaUsuario[countSequencia] = LED3;
-            Serial.println("Usuario apertou 3");
-            Serial.println(sequenciaResposta[countSequencia]);
-
-            if (sequenciaUsuario[countSequencia] != sequenciaResposta[countSequencia]) {
-              state = 3;
-              acertou = 0;
-            }
-            countSequencia++;
+            checkSequencia(LED3);
           }
         }
       }
@@ -131,15 +105,27 @@ void loop () {
       break;
   }
 
-  
+
 }
 
 void RestartSequence() {
   state = 1;
   countSequencia = 0;
   acertou = 1;
-  Serial.println("Resetando sequencia");
   digitalWrite(LED1, HIGH);
   digitalWrite(LED2, HIGH);
   digitalWrite(LED3, HIGH);
+}
+
+void checkSequencia(int led) {
+  //salvando na sequencia e aumentando contador
+  sequenciaUsuario[countSequencia] = led;
+  Serial.println("Usuario apertou ");
+  Serial.println(led);
+  if (sequenciaUsuario[countSequencia] != sequenciaResposta[countSequencia]) {
+    state = 3;
+    acertou = 0;
+  }
+  
+  countSequencia++;
 }

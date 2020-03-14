@@ -1,3 +1,9 @@
+/*
+Nome: Felipe Pessoa e Guilherme Bizzo
+Matricula: 1411716 e 1710563
+
+*/
+
 #include "pindefs.h"
 int ledOn = 0;
 int canBlink = 1;
