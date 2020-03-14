@@ -8,6 +8,8 @@ unsigned long interBot = 400;
 unsigned long minimo = 125;
 unsigned long maximo = 1000;
 
+//teste
+
 void setup() {
   pinMode(LED1, OUTPUT);;
   pinMode(KEY1, INPUT_PULLUP);
