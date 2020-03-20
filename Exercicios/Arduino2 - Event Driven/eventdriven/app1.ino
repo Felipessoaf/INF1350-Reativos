@@ -7,18 +7,18 @@ int state = LOW;
 void appinit()
 {
     button_listen(KEY1);
-    set_timer(1, 1000);
+    timer_set(1, 1000);
 }
 
 void button_changed (int pin) 
 {
     digitalWrite(LED1, LOW);
-    exit();
+    exit(0);
 }
 
 void timer_expired (int t) 
 {
     state = !state;
     digitalWrite (LED1, state);
-    set_timer (1, 1000);
+    timer_set (1, 1000);
 }
