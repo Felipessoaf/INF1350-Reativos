@@ -1,12 +1,32 @@
+#include "eventdriven.h"
+#include "app.h"
+#include "pindefs.h"
+
+int timers[3];
+int buttons[3] = {-1, -1, -1};
+
+unsigned long previousMillis = 0;
+unsigned long interval = 500;
+
 /* Funcoes de registro: */
 void button_listen(int pin)
 {
     // "pin" passado deve gerar notificacoes
+    for(int i = 0; i < 3; i++)
+    {
+        if(buttons[i] != pin && buttons[i] < 0)
+        {
+            buttons[i] = pin;
+            pinMode(pin, INPUT_PULLUP);
+        }
+    }
 }
 
 void timer_set (int t, int ms)
 {
-    // timer t deve expirar ap ́os "ms" milisegundos// timer s ́o dispara uma vez
+    // timer t deve expirar apos "ms" milisegundos
+    // timer so dispara uma vez
+    timers[t] = ms;
 }
 
 /* Callbacks  - definidas em app.h*/
@@ -28,9 +48,11 @@ void setup ()
 void loop () 
 {
     // detecta novos eventos
-
-    // notifica o usu ́ario
-    button_changed(); 
+    if()
+    {
+        // notifica o usuario
+        button_changed(); 
+    }
 
     // detecta novos eventos
 

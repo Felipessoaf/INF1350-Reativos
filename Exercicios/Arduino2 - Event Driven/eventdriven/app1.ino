@@ -7,7 +7,7 @@ int state = LOW;
 void appinit()
 {
     button_listen(KEY1);
-    set_timer (1, 1000);
+    set_timer(1, 1000);
 }
 
 void button_changed (int pin) 
