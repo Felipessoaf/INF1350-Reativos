@@ -42,6 +42,8 @@ void timer_set (int t, int ms)
   // timer so dispara uma vez
   timers[t] = ms;
   timersUsed[t] = 1;
+  Serial.println("timers");
+  Serial.println(t);
 }
 
 /* Callbacks  - definidas em app.h*/
@@ -55,7 +57,10 @@ void timer_expired (void);
 void setup ()
 {
   // inicializacao da API
-
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT);
+  Serial.begin(9600);
   // inicializacao do usuario
   appinit();
 }
@@ -81,11 +86,18 @@ void loop ()
   {
     //atualiza o tempo
     timers[i] -= currentMillis - previousMillis;
-    if (timers[i] <= 0 and timersUsed[i] == 1)
+    if (timers[i] <= 0 and i == 1)
     {
+      Serial.println("timers[i] <= 0");
+      
+      if(timersUsed[i] == 1)
+      {
+      Serial.println("timersUsed[i] == 1");
+      Serial.println(timers[i]);
       // notifica o usuario
       timer_expired(i);
       timersUsed[i] = 0;
+      }
     }
   }
   previousMillis = currentMillis;

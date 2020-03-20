@@ -8,6 +8,9 @@ void appinit()
 {
     button_listen(KEY1);
     timer_set(1, 1000);
+    digitalWrite(LED1, HIGH);
+    digitalWrite(LED2, HIGH);
+    digitalWrite(LED3, HIGH);
 }
 
 void button_changed (int pin) 
