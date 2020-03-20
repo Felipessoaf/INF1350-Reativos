@@ -17,17 +17,21 @@ void button_listen(int pin)
     // "pin" passado deve gerar notificacoes
     for(int i = 0; i < 3; i++)
     {
-        if(buttons[i] != pin && buttons[i] < 0)
+        if(buttons[i] < 0)
         {
-            buttons[i] = pin;
-            pinMode(pin, INPUT_PULLUP);
+            slot = i;
         }
         
-        if(buttons[i] != pin && buttons[i] < 0)
+        if(buttons[i] == pin)
         {
-            buttons[i] = pin;
-            pinMode(pin, INPUT_PULLUP);
+            slot = -1;
         }
+    }
+
+    if(slot >= 0)
+    {
+        buttons[slot] = pin;
+        pinMode(pin, INPUT_PULLUP);
     }
 }
 
@@ -58,12 +62,14 @@ void setup ()
 void loop (dt) 
 {
     // detecta novos eventos
-    if()
+    for(int i = 0; i < 3; i++)
     {
-        // notifica o usuario
-        button_changed(); 
+        if(buttons[i] >= 0 and digitalRead(buttons[i]) == LOW)
+        {
+            // notifica o usuario
+            button_changed(buttons[i]); 
+        }
     }
-
     
     // detecta novos eventos
     for(int i = 0; i < 3; i++)
