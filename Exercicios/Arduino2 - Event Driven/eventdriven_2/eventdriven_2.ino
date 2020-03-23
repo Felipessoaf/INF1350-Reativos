@@ -7,8 +7,8 @@ int timersUsed[3] = {0, 0, 0};
 int buttons[3] = { -1, -1, -1};
 
 unsigned long previousMillis = 0;
-unsigned long interval = 500;
-unsigned long previousButtonMillis = 0;
+unsigned long intervalBtn = 200;
+unsigned long previousButtonMillis[3] = {0, 0, 0};
 
 /* Funcoes de registro: */
 void button_listen(int pin)
@@ -42,8 +42,6 @@ void timer_set (int t, int ms)
   // timer so dispara uma vez
   timers[t] = ms;
   timersUsed[t] = 1;
-  Serial.println("timers");
-  Serial.println(t);
 }
 
 /* Callbacks  - definidas em app.h*/
@@ -68,15 +66,15 @@ void setup ()
 void loop ()
 {
   unsigned long currentMillis = millis();
-  if (currentMillis - previousButtonMillis >= interval) {
-    previousButtonMillis = currentMillis;
-    // detecta novos eventos
-    for (int i = 0; i < 3; i++)
-    {
+  // detecta novos eventos
+  for (int i = 0; i < 3; i++)
+  {
+    if (currentMillis - previousButtonMillis[i] >= intervalBtn) {
       if (buttons[i] >= 0 and digitalRead(buttons[i]) == LOW)
       {
         // notifica o usuario
         button_changed(buttons[i]);
+        previousButtonMillis[i] = currentMillis;
       }
     }
   }
@@ -86,16 +84,13 @@ void loop ()
   {
     if (timersUsed[i] == 1)
     {
-      Serial.println(timersUsed[i]);
-      Serial.println(timers[i]);
       //atualiza o tempo
       timers[i] -= currentMillis - previousMillis;
       if (timers[i] <= 0)
       {
-        Serial.println("timers[i] <= 0");
+        timersUsed[i] = 0;
         // notifica o usuario
         timer_expired(i);
-        timersUsed[i] = 0;
       }
     }
   }

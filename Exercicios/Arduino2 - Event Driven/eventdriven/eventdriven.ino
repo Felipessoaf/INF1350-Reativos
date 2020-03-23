@@ -42,8 +42,6 @@ void timer_set (int t, int ms)
   // timer so dispara uma vez
   timers[t] = ms;
   timersUsed[t] = 1;
-  Serial.println("timers");
-  Serial.println(t);
 }
 
 /* Callbacks  - definidas em app.h*/
@@ -86,16 +84,13 @@ void loop ()
   {
     if (timersUsed[i] == 1)
     {
-      Serial.println(timersUsed[i]);
-      Serial.println(timers[i]);
       //atualiza o tempo
       timers[i] -= currentMillis - previousMillis;
       if (timers[i] <= 0)
       {
-        Serial.println("timers[i] <= 0");
+        timersUsed[i] = 0;
         // notifica o usuario
         timer_expired(i);
-        timersUsed[i] = 0;
       }
     }
   }
