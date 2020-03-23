@@ -73,13 +73,13 @@ void button_changed (int pin)
 
 void timer_expired (int t)
 {
-  if (t == 0)
-  {
+  //if (t == 0)
+  //{
     if (canBlink)
     {
       state = !state;
       digitalWrite (LED1, state);
     }
     timer_set (1, ledInterval);
-  }
+  //}
 }
