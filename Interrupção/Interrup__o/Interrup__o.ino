@@ -31,7 +31,7 @@ void loop() {
   unsigned long currentMillis = millis();
   Serial.print("!");
   if (currentMillis - previousMillis >= intervalBtn) {
-    if (buttonChanged) {
+    if (buttonChanged and digitalRead(KEY1) == LOW) {
       digitalWrite(LED1, state);
       buttonChanged = 0;
       state = !state;
