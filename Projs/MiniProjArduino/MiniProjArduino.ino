@@ -2,6 +2,12 @@
   Nome: Felipe Pessoa e Guilherme Bizzo
   Matricula: 1411716 e 1710563
 */
+//TODO:
+//1- Botar sons de acerto e erro
+//2- Ver quanto tempo cada jogador levou para acertar a sequencia, e usar isso para desempate da rodada e desempate final
+//3- Botar para piscar o resultado no final e botar um som?
+//4- Separar previousMillis para cada key (pode ver o exemplo no event driven)
+
 
 #include "pindefs.h"
 
@@ -11,16 +17,20 @@
 #define DATA_DIO 8
 
 /* Segment byte maps for numbers 0 to 9 */
-const byte SEGMENT_MAP[] = {0xC0,0xF9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0X80,0X90};
+const byte SEGMENT_MAP[] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0X80, 0X90};
 /* Byte maps to select digit 1 to 4 */
-const byte SEGMENT_SELECT[] = {0xF1,0xF2,0xF4,0xF8};
- 
+const byte SEGMENT_SELECT[] = {0xF1, 0xF2, 0xF4, 0xF8};
+
 int state = 1;
 int countSequencia = 0;
 int acertou = 0;
+int turnCount = 1;
+int pontos1 = 0;
+int pontos2 = 0;
+int turnPlayer = 1;
 
 unsigned long previousMillis = 0;
-unsigned long interval = 500;
+unsigned long interval = 200;
 unsigned long ledInterval = 1000;
 
 int sequenciaResposta[5];
@@ -28,28 +38,30 @@ int sequenciaUsuario[5];
 
 void setup() {
   /* Set DIO pins to outputs */
-  pinMode(LATCH_DIO,OUTPUT);
-  pinMode(CLK_DIO,OUTPUT);
-  pinMode(DATA_DIO,OUTPUT);
-  
+  pinMode(LATCH_DIO, OUTPUT);
+  pinMode(CLK_DIO, OUTPUT);
+  pinMode(DATA_DIO, OUTPUT);
+
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
   pinMode(LED3, OUTPUT);
   pinMode(KEY1, INPUT_PULLUP);
   pinMode(KEY2, INPUT_PULLUP);
   pinMode(KEY3, INPUT_PULLUP);
+
   RestartSequence();
+
   randomSeed(analogRead(0));
   Serial.begin(9600);
 }
 
 void loop () {
   unsigned long currentMillis = millis();
-  
-  WriteNumberToSegment(0 , 5);
-  WriteNumberToSegment(1 , 6);
-  WriteNumberToSegment(2 , 7);
-  WriteNumberToSegment(3 , 8);
+
+  WriteNumberToSegment(0 , turnCount);
+  WriteNumberToSegment(1 , turnPlayer);
+  WriteNumberToSegment(2 , pontos1);
+  WriteNumberToSegment(3 , pontos2);
 
   switch (state) {
     case 1:
@@ -103,18 +115,37 @@ void loop () {
       break;
     case 3:
       //mostra resultados
-      digitalWrite(LED1, LOW);
       if (acertou) {
-        digitalWrite(LED2, LOW);
-        digitalWrite(LED3, LOW);
+        //Ativa som de acerto
+
+        if (turnPlayer == 1) {
+          pontos1 += 1;
+        }
+        else {
+          pontos2 += 1;
+        }
+      }
+      else {
+        //Ativa som de erro
+
       }
 
-      //input para resetar
-      if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
+      turnPlayer = (turnPlayer == 1) ? 2 : 1;
 
-        if (digitalRead(KEY1) == LOW) {
-          RestartSequence();
+      if (turnCount < 5) {
+        if(turnPlayer == 1){
+          turnCount += 1; 
+        }
+        RestartSequence();
+      }
+      else {
+        //input para resetar
+        if (currentMillis - previousMillis >= interval) {
+          previousMillis = currentMillis;
+
+          if (digitalRead(KEY1) == LOW and digitalRead(KEY2) == LOW and digitalRead(KEY3) == LOW) {
+            RestartGame();
+          }
         }
       }
       break;
@@ -122,8 +153,6 @@ void loop () {
       RestartSequence();
       break;
   }
-
-
 }
 
 void RestartSequence() {
@@ -135,6 +164,11 @@ void RestartSequence() {
   digitalWrite(LED3, HIGH);
 }
 
+void RestartGame() {
+
+  RestartSequence();
+}
+
 void checkSequencia(int led) {
   //salvando na sequencia e aumentando contador
   sequenciaUsuario[countSequencia] = led;
@@ -144,14 +178,14 @@ void checkSequencia(int led) {
     state = 3;
     acertou = 0;
   }
-  
+
   countSequencia++;
 }
- 
+
 /* Write a decimal number between 0 and 9 to one of the 4 digits of the display */
 void WriteNumberToSegment(byte Segment, byte Value) {
-  digitalWrite(LATCH_DIO,LOW);
+  digitalWrite(LATCH_DIO, LOW);
   shiftOut(DATA_DIO, CLK_DIO, MSBFIRST, SEGMENT_MAP[Value]);
   shiftOut(DATA_DIO, CLK_DIO, MSBFIRST, SEGMENT_SELECT[Segment] );
-  digitalWrite(LATCH_DIO,HIGH);
+  digitalWrite(LATCH_DIO, HIGH);
 }
