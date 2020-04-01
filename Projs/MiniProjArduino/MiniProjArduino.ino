@@ -165,7 +165,10 @@ void RestartSequence() {
 }
 
 void RestartGame() {
-
+  turnCount = 1;
+  pontos1 = 0;
+  pontos2 = 0;
+  turnPlayer = 1;
   RestartSequence();
 }
 
