@@ -92,7 +92,7 @@ void loop () {
     case 2:
       //esperar input do usuario
       if (countSequencia < 5) {
-        if (currentMillis - previousMillis >= interval) {
+        if (currentMillis - previousMillis >= interval and (digitalRead(KEY1) == LOW or digitalRead(KEY2) == LOW or digitalRead(KEY3) == LOW)){
           previousMillis = currentMillis;
 
           if (digitalRead(KEY1) == LOW) {
