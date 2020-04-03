@@ -117,7 +117,8 @@ void loop () {
       //mostra resultados
       if (acertou) {
         //Ativa som de acerto
-
+        //tone(3, 32, 100);
+        //tone(3, 49, 100);
         if (turnPlayer == 1) {
           pontos1 += 1;
         }
@@ -127,7 +128,8 @@ void loop () {
       }
       else {
         //Ativa som de erro
-
+        //tone(3, 20, 100);
+        //tone(3, 20, 100);
       }
 
       turnPlayer = (turnPlayer == 1) ? 2 : 1;
