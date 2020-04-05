@@ -8,7 +8,6 @@
 //3- Botar para piscar o resultado no final e botar um som?
 //4- Separar previousMillis para cada key (pode ver o exemplo no event driven)
 
-
 #include "pindefs.h"
 
 /* Define shift register pins used for seven segment display */
@@ -21,176 +20,291 @@ const byte SEGMENT_MAP[] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0X80
 /* Byte maps to select digit 1 to 4 */
 const byte SEGMENT_SELECT[] = {0xF1, 0xF2, 0xF4, 0xF8};
 
+// Globals
 int state = 1;
-int countSequencia = 0;
-int acertou = 0;
+int countSequence = 0;
 int turnCount = 1;
-int pontos1 = 0;
-int pontos2 = 0;
-int turnPlayer = 1;
+int turnPlayer = 0;
 
+// Players stats
+bool turnResult[2] = {true, true};
+int totalPoints[2] = {0, 0};
+unsigned long turnDuration[2] = {0, 0};
+unsigned long totalDuration[2] = {0, 0};
+
+// Time
 unsigned long previousMillis = 0;
 unsigned long interval = 200;
 unsigned long ledInterval = 1000;
 
-int sequenciaResposta[5];
-int sequenciaUsuario[5];
+int sequenceAnswer[5];
+int sequencePlayer[5];
 
-void setup() {
-  /* Set DIO pins to outputs */
-  pinMode(LATCH_DIO, OUTPUT);
-  pinMode(CLK_DIO, OUTPUT);
-  pinMode(DATA_DIO, OUTPUT);
+void setup()
+{
+    /* Set DIO pins to outputs */
+    pinMode(LATCH_DIO, OUTPUT);
+    pinMode(CLK_DIO, OUTPUT);
+    pinMode(DATA_DIO, OUTPUT);
 
-  pinMode(LED1, OUTPUT);
-  pinMode(LED2, OUTPUT);
-  pinMode(LED3, OUTPUT);
-  pinMode(KEY1, INPUT_PULLUP);
-  pinMode(KEY2, INPUT_PULLUP);
-  pinMode(KEY3, INPUT_PULLUP);
+    pinMode(LED1, OUTPUT);
+    pinMode(LED2, OUTPUT);
+    pinMode(LED3, OUTPUT);
+    pinMode(KEY1, INPUT_PULLUP);
+    pinMode(KEY2, INPUT_PULLUP);
+    pinMode(KEY3, INPUT_PULLUP);
 
-  RestartSequence();
+    RestartSequence();
 
-  randomSeed(analogRead(0));
-  Serial.begin(9600);
+    randomSeed(analogRead(0));
+    Serial.begin(9600);
 }
 
-void loop () {
-  unsigned long currentMillis = millis();
+void loop()
+{
+    unsigned long currentMillis = millis();
 
-  WriteNumberToSegment(0 , turnCount);
-  WriteNumberToSegment(1 , turnPlayer);
-  WriteNumberToSegment(2 , pontos1);
-  WriteNumberToSegment(3 , pontos2);
+    WriteNumberToSegment(0, turnCount);
+    WriteNumberToSegment(1, turnPlayer + 1);
+    WriteNumberToSegment(2, totalPoints[0]);
+    WriteNumberToSegment(3, totalPoints[1]);
 
-  switch (state) {
+    switch (state)
+    {
     case 1:
-      //piscar leds 1,2,3 5 vezes aleatoriamente
-      if (countSequencia < 5) {
-        //randomizando o led
-        int randLed = random(LED1, LED3 + 1);
+        /*  Fase dos leds  */
 
-        //piscando o led
-        digitalWrite(randLed, LOW);
-        delay(ledInterval);
-        digitalWrite(randLed, HIGH);
-        delay(ledInterval);
-        Serial.println(randLed);
+        //piscar leds 1,2,3 5 vezes aleatoriamente
+        if (countSequence < 5)
+        {
+            //randomizando o led
+            int randLed = random(LED1, LED3 + 1);
 
-        //salvando na sequencia e aumentando contador
-        sequenciaResposta[countSequencia] = randLed;
-        countSequencia++;
-      }
-      else {
-        state = 2;
-        countSequencia = 0;
-        digitalWrite(LED1, HIGH);
-        digitalWrite(LED2, HIGH);
-        digitalWrite(LED3, HIGH);
-      }
-      break;
+            //piscando o led
+            digitalWrite(randLed, LOW);
+            delay(ledInterval);
+            digitalWrite(randLed, HIGH);
+            delay(ledInterval);
+
+            int step = countSequence + 1;
+            Serial.println("Sequence :" + randLed);
+
+            //salvando na sequencia e aumentando contador
+            sequenceAnswer[countSequence] = randLed;
+            countSequence++;
+        }
+        else
+        {
+            state = 2;
+            countSequence = 0;
+            digitalWrite(LED1, HIGH);
+            digitalWrite(LED2, HIGH);
+            digitalWrite(LED3, HIGH);
+        }
+        break;
     case 2:
-      //esperar input do usuario
-      if (countSequencia < 5) {
-        if (currentMillis - previousMillis >= interval and (digitalRead(KEY1) == LOW or digitalRead(KEY2) == LOW or digitalRead(KEY3) == LOW)){
-          previousMillis = currentMillis;
+        /*  Fase de input do usuario  */
 
-          if (digitalRead(KEY1) == LOW) {
-            checkSequencia(LED1);
-          }
-          if (digitalRead(KEY2) == LOW) {
-            checkSequencia(LED2);
-
-          }
-          if (digitalRead(KEY3) == LOW) {
-            checkSequencia(LED3);
-          }
+        //grava o tempo inicial caso seja o primeiro input
+        if (turnDuration[turnPlayer] == 0)
+        {
+            turnDuration[turnPlayer] = currentMillis;
         }
-      }
-      else {
-        state = 3;
-        countSequencia = 0;
-        acertou = 1;
-      }
-      break;
+
+        if (countSequence < 5)
+        {
+            if (currentMillis - previousMillis >= interval and (digitalRead(KEY1) == LOW or digitalRead(KEY2) == LOW or digitalRead(KEY3) == LOW))
+            {
+                previousMillis = currentMillis;
+
+                if (digitalRead(KEY1) == LOW)
+                {
+                    checkSequence(LED1);
+                }
+                if (digitalRead(KEY2) == LOW)
+                {
+                    checkSequence(LED2);
+                }
+                if (digitalRead(KEY3) == LOW)
+                {
+                    checkSequence(LED3);
+                }
+            }
+        }
+        else
+        {
+            state = 3;
+            countSequence = 0;
+            turnResult[turnPlayer] = false;
+        }
+        break;
     case 3:
-      //mostra resultados
-      if (acertou) {
-        //Ativa som de acerto
-        //tone(3, 32, 100);
-        //tone(3, 49, 100);
-        if (turnPlayer == 1) {
-          pontos1 += 1;
-        }
-        else {
-          pontos2 += 1;
-        }
-      }
-      else {
-        //Ativa som de erro
-        //tone(3, 20, 100);
-        //tone(3, 20, 100);
-      }
+        /*  Fase de resultados  */
 
-      turnPlayer = (turnPlayer == 1) ? 2 : 1;
+        //calcula o tempo que o jogador levou
+        turnDuration[turnPlayer] = currentMillis - turnDuration[turnPlayer];
 
-      if (turnCount < 5) {
-        if(turnPlayer == 1){
-          turnCount += 1; 
-        }
-        RestartSequence();
-      }
-      else {
-        //input para resetar
-        if (currentMillis - previousMillis >= interval) {
-          previousMillis = currentMillis;
+        //mostra resultados
+        if (turnResult[turnPlayer])
+        {
+            //Ativa som de acerto
+            //tone(3, 32, 100);
+            //tone(3, 49, 100);
 
-          if (digitalRead(KEY1) == LOW and digitalRead(KEY2) == LOW and digitalRead(KEY3) == LOW) {
-            RestartGame();
-          }
+            Serial.println("Right :" + turnPlayer);
+            totalDuration[turnPlayer] += turnDuration[turnPlayer];
         }
-      }
-      break;
+        else
+        {
+            //Ativa som de erro
+            //tone(3, 20, 100);
+            //tone(3, 20, 100);
+            Serial.println("Wrong :" + turnPlayer);
+        }
+
+        // Se o jogador 2 acabou de jogar, acabou a rodada, e o ponto pode ser calculado
+        if(turnPlayer == 1)
+        {
+            // Jogador 1 acertou
+            if(turnResult[0] == true)
+            {
+                // Jogador 2 acertou
+                if(turnResult[1] == true)
+                {
+                    // Jogador 1 foi mais rápido
+                    if(turnDuration[0] < turnDuration[1])
+                    {
+                        Serial.println("Player 1 was faster!");
+                        totalPoints[0] += 1;
+                    }
+                    else
+                    {
+                        Serial.println("Player 2 was faster!");
+                        totalPoints[1] += 1;
+                    }                    
+                }
+                else
+                {
+                    Serial.println("Player 1 won this round!");
+                    totalPoints[0] += 1;
+                }
+                
+            }
+            else if(turnResult[1] == true)
+            {
+                Serial.println("Player 2 won this round!");
+                totalPoints[1] += 1;
+            }
+            else
+            {   
+                Serial.println("No winners!");
+            }
+        }
+
+        turnPlayer = (turnPlayer == 0) ? 1 : 0;
+
+        if (turnCount < 5)
+        {
+            if (turnPlayer == 1)
+            {
+                turnCount += 1;
+            }
+            RestartSequence();
+        }
+        else
+        {
+            //Checa empate
+            if(totalPoints[0] == totalPoints[1])
+            {
+                if(totalDuration[0] < totalDuration[1])
+                {
+                    Serial.println("Player 1 won the game!");
+                }
+                else if(totalDuration[0] > totalDuration[1])
+                {
+                    Serial.println("Player 2 won the game!");
+                }      
+                else
+                {
+                    Serial.println("It's a tie!");
+                }
+            }
+            else
+            {
+                if(totalPoints[0] > totalPoints[1])
+                {
+                    Serial.println("Player 1 won the game!");
+                }
+                else
+                {
+                    Serial.println("Player 2 won the game!");
+                }   
+            }            
+
+            //Botar para piscar o resultado no final e botar um som?
+
+
+            //input para resetar
+            if (currentMillis - previousMillis >= interval)
+            {
+                previousMillis = currentMillis;
+
+                if (digitalRead(KEY1) == LOW and digitalRead(KEY2) == LOW and digitalRead(KEY3) == LOW)
+                {
+                    RestartGame();
+                }
+            }
+        }
+        break;
     default:
-      RestartSequence();
-      break;
-  }
+        RestartSequence();
+        break;
+    }
 }
 
-void RestartSequence() {
-  state = 1;
-  countSequencia = 0;
-  acertou = 1;
-  digitalWrite(LED1, HIGH);
-  digitalWrite(LED2, HIGH);
-  digitalWrite(LED3, HIGH);
+void RestartSequence()
+{
+    state = 1;
+    countSequence = 0;
+    turnResult[turnPlayer] = true;
+    turnDuration[turnPlayer] = 0;
+
+    digitalWrite(LED1, HIGH);
+    digitalWrite(LED2, HIGH);
+    digitalWrite(LED3, HIGH);
 }
 
-void RestartGame() {
-  turnCount = 1;
-  pontos1 = 0;
-  pontos2 = 0;
-  turnPlayer = 1;
-  RestartSequence();
+void RestartGame()
+{
+    turnCount = 1;
+    totalPoints[0] = 0;
+    totalPoints[1] = 0;
+    totalDuration[0] = 0;
+    totalDuration[1] = 0;
+    turnPlayer = 0;
+    RestartSequence();
 }
 
-void checkSequencia(int led) {
-  //salvando na sequencia e aumentando contador
-  sequenciaUsuario[countSequencia] = led;
-  Serial.println("Usuario apertou ");
-  Serial.println(led);
-  if (sequenciaUsuario[countSequencia] != sequenciaResposta[countSequencia]) {
-    state = 3;
-    acertou = 0;
-  }
+void checkSequence(int led)
+{
+    //salvando na sequencia e aumentando contador
+    sequencePlayer[countSequence] = led;
+    Serial.println("Usuario apertou ");
+    Serial.println(led);
+    if (sequencePlayer[countSequence] != sequenceAnswer[countSequence])
+    {
+        state = 3;
+        turnResult[turnPlayer] = false;
+    }
 
-  countSequencia++;
+    countSequence++;
 }
 
 /* Write a decimal number between 0 and 9 to one of the 4 digits of the display */
-void WriteNumberToSegment(byte Segment, byte Value) {
-  digitalWrite(LATCH_DIO, LOW);
-  shiftOut(DATA_DIO, CLK_DIO, MSBFIRST, SEGMENT_MAP[Value]);
-  shiftOut(DATA_DIO, CLK_DIO, MSBFIRST, SEGMENT_SELECT[Segment] );
-  digitalWrite(LATCH_DIO, HIGH);
+void WriteNumberToSegment(byte Segment, byte Value)
+{
+    digitalWrite(LATCH_DIO, LOW);
+    shiftOut(DATA_DIO, CLK_DIO, MSBFIRST, SEGMENT_MAP[Value]);
+    shiftOut(DATA_DIO, CLK_DIO, MSBFIRST, SEGMENT_SELECT[Segment]);
+    digitalWrite(LATCH_DIO, HIGH);
 }
