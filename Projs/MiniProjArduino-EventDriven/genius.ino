@@ -134,7 +134,7 @@ void RandLed()
                 //randomizando o led
                 currentRandLed = random(LED1, LED3 + 1);
                          
-                //salvando na sequencia e aumentando contador
+                //salvando na sequencia
                 sequenceAnswer[countSequence] = randLed; 
 
                 //Liga Led
@@ -145,6 +145,7 @@ void RandLed()
             }
             else
             {
+                //Led está ligado, deve desligar e setar timer novamente
                 if(digitalRead(buttons[i]) == LOW)
                 {
                     digitalWrite(currentRandLed, HIGH);
@@ -152,22 +153,23 @@ void RandLed()
                 }
                 else
                 {
-                    
+                    //Led desligado, atualizar contador da sequencia e passar para o proximo led
+                    Serial.println("Sequence :");
+                    Serial.println(randLed);
+
+                    countSequence++;
+                    currentRandLed = -1;
                 }                
             }
-            
-
-            int step = countSequence + 1;
-            Serial.println("Sequence :");
-            Serial.println(randLed);
-
-            countSequence++;
         }
         else
         {
             state = 2;
             countSequence = 0;
             ResetLed();
+
+            //grava o tempo inicial do state 2
+            turnDuration[turnPlayer] = currentMillis;
         }
     }
     else
@@ -213,6 +215,7 @@ void checkSequence(int led)
     sequencePlayer[countSequence] = led;
     Serial.println("Usuario apertou ");
     Serial.println(led);
+
     if (sequencePlayer[countSequence] != sequenceAnswer[countSequence])
     {
         state = 3;
@@ -220,6 +223,13 @@ void checkSequence(int led)
     }
 
     countSequence++;
+
+    //Acabou o input do jogador
+    if (countSequence == 5)
+    {
+        state = 3;
+        turnResult[turnPlayer] = true;
+    }
 }
 
 /* Write a decimal number between 0 and 9 to one of the 4 digits of the display */
@@ -243,74 +253,7 @@ void WriteNumberToSegment(byte Segment, byte Value)
 
 //   switch (state)
 //   {
-//     case 1:
-//       /*  Fase dos leds  */
-
-//       //piscar leds 1,2,3 5 vezes aleatoriamente
-//       if (countSequence < 5)
-//       {
-//         //randomizando o led
-//         int randLed = random(LED1, LED3 + 1);
-
-//         //piscando o led
-//         digitalWrite(randLed, LOW);
-//         delay(ledInterval);
-//         digitalWrite(randLed, HIGH);
-//         delay(ledInterval);
-
-//         int step = countSequence + 1;
-//         Serial.println("Sequence :");
-//         Serial.println(randLed);
-
-//         //salvando na sequencia e aumentando contador
-//         sequenceAnswer[countSequence] = randLed;
-//         countSequence++;
-//       }
-//       else
-//       {
-//         state = 2;
-//         countSequence = 0;
-//         digitalWrite(LED1, HIGH);
-//         digitalWrite(LED2, HIGH);
-//         digitalWrite(LED3, HIGH);
-//       }
-//       break;
-//     case 2:
-//       /*  Fase de input do usuario  */
-
-//       //grava o tempo inicial caso seja o primeiro input
-//       if (turnDuration[turnPlayer] == 0)
-//       {
-//         turnDuration[turnPlayer] = currentMillis;
-//       }
-
-//       if (countSequence < 5)
-//       {
-//         if (currentMillis - previousMillis >= interval)
-//         {
-//           previousMillis = currentMillis;
-
-//           if (digitalRead(KEY1) == LOW)
-//           {
-//             checkSequence(LED1);
-//           }
-//           if (digitalRead(KEY2) == LOW)
-//           {
-//             checkSequence(LED2);
-//           }
-//           if (digitalRead(KEY3) == LOW)
-//           {
-//             checkSequence(LED3);
-//           }
-//         }
-//       }
-//       else
-//       {
-//         state = 3;
-//         countSequence = 0;
-//         turnResult[turnPlayer] = true;
-//       }
-//       break;
+//     
 //     case 3:
 //       /*  Fase de resultados  */
       
