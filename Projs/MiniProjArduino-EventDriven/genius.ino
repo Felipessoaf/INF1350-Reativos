@@ -35,8 +35,9 @@ unsigned long totalDuration[2] = {0, 0};
 
 // Time
 unsigned long previousMillis = 0;
-unsigned long interval = 200;
+unsigned long btnInterval = 200;
 unsigned long ledInterval = 1000;
+unsigned long oldMillisBtns[3] = {0, 0, 0}
 
 int sequenceAnswer[5];
 int sequencePlayer[5];
@@ -87,15 +88,26 @@ void button_changed (int pin)
     {
         if(pin == KEY1)
         {
+            oldMillisBtns[0] = millis();
             checkSequence(LED1);
         }
         else if(pin == KEY2)
         {
+            oldMillisBtns[1] = millis();
             checkSequence(LED2);
         }
         else if(pin == KEY3)
         {
+            oldMillisBtns[2] = millis();
             checkSequence(LED3);
+        }
+    }
+    else if(state == 3)
+    {
+        unsigned long currentMillis = millis();
+        if(currentMillis - oldMillisBtn[0] < btnInterval && currentMillis - oldMillisBtn[1] < btnInterval && currentMillis - oldMillisBtn[2] < btnInterval)
+        {
+            RestartGame();
         }
     }
 }
@@ -104,21 +116,12 @@ void timer_expired (int t)
 {
     if(t == 0)
     {
-        WriteNumberToSegment(0, turnCount);
-        WriteNumberToSegment(1, turnPlayer + 1);
-        WriteNumberToSegment(2, totalPoints[0]);
-        WriteNumberToSegment(3, totalPoints[1]);
-        timer_set (0, 10);
+        DisplayInfo();
     }
     else if(t == 1)
     {
         RandLed();
     }
-
-
-    // state = !state;
-    // digitalWrite (LED1, state);
-    // timer_set (0, 1000);
 }
 
 void RandLed()
@@ -218,7 +221,7 @@ void checkSequence(int led)
 
     if (sequencePlayer[countSequence] != sequenceAnswer[countSequence])
     {
-        state = 3;
+        ShowResults();
         turnResult[turnPlayer] = false;
     }
 
@@ -227,8 +230,140 @@ void checkSequence(int led)
     //Acabou o input do jogador
     if (countSequence == 5)
     {
-        state = 3;
+        ShowResults();
         turnResult[turnPlayer] = true;
+    }
+}
+
+void DisplayInfo()
+{
+    if(state != 3)
+    {
+        WriteNumberToSegment(0, turnCount);
+        WriteNumberToSegment(1, turnPlayer + 1);
+        WriteNumberToSegment(2, totalPoints[0]);
+        WriteNumberToSegment(3, totalPoints[1]);
+    }
+    timer_set (0, 10);
+}
+
+void ShowResults()
+{
+    state = 3;
+
+    //calcula o tempo que o jogador levou
+    turnDuration[turnPlayer] = currentMillis - turnDuration[turnPlayer];    
+
+    //mostra resultados
+    if (turnResult[turnPlayer])
+    {
+        //Ativa som de acerto
+        /*tone(3, 32, 1000);
+        delay(10);
+        noTone(3);
+        tone(3, 49, 1000);
+        delay(10);
+        noTone(3);*/
+        Serial.println("Right :");
+        Serial.println(turnPlayer);
+        totalDuration[turnPlayer] += turnDuration[turnPlayer];
+    }
+    else
+    {
+        //Ativa som de erro
+        /*tone(3, 20, 1000);
+        delay(10);
+        noTone(3);
+        tone(3, 20, 1000);
+        delay(10);
+        noTone(3);*/
+        Serial.println("Wrong :");
+        Serial.println(turnPlayer);
+    }
+    
+    // Se o jogador 2 acabou de jogar, entao a rodada acabou, e o ponto pode ser calculado
+    if (turnPlayer == 1)
+    {
+        //atualiza contador de turno
+        turnCount += 1;
+
+        // Jogador 1 acertou
+        if (turnResult[0] == true)
+        {
+            // Jogador 2 acertou
+            if (turnResult[1] == true)
+            {
+                // Jogador 1 foi mais rápido
+                if (turnDuration[0] < turnDuration[1])
+                {
+                    Serial.println("Player 1 was faster!");
+                    totalPoints[0] += 1;
+                }
+                else
+                {
+                    Serial.println("Player 2 was faster!");
+                    totalPoints[1] += 1;
+                }
+            }
+            else
+            {
+                Serial.println("Player 1 won this round!");
+                totalPoints[0] += 1;
+            }
+        }
+        else if (turnResult[1] == true)
+        {
+            Serial.println("Player 2 won this round!");
+            totalPoints[1] += 1;
+        }
+        else
+        {
+            Serial.println("No winners!");
+        }
+    }
+
+    turnPlayer = (turnPlayer == 0) ? 1 : 0;
+
+    if (turnCount < 5)
+    {
+        RestartSequence();
+    }
+    else
+    {
+        //Escreve e pisca resultado final da partida
+        /*WriteNumberToSegment(0, 1);
+        WriteNumberToSegment(1, totalPoints[0]);
+        WriteNumberToSegment(2, 2);
+        WriteNumberToSegment(3, totalPoints[1]);
+        delay(1000);*/
+
+        //Checa empate
+        if (totalPoints[0] == totalPoints[1])
+        {
+            if (totalDuration[0] < totalDuration[1])
+            {
+                Serial.println("Player 1 won the game!");
+            }
+            else if (totalDuration[0] > totalDuration[1])
+            {
+                Serial.println("Player 2 won the game!");
+            }
+            else
+            {
+                Serial.println("It's a tie!");
+            }
+        }
+        else
+        {
+            if (totalPoints[0] > totalPoints[1])
+            {
+                Serial.println("Player 1 won the game!");
+            }
+            else
+            {
+                Serial.println("Player 2 won the game!");
+            }
+        } 
     }
 }
 
@@ -240,159 +375,3 @@ void WriteNumberToSegment(byte Segment, byte Value)
     shiftOut(DATA_DIO, CLK_DIO, MSBFIRST, SEGMENT_SELECT[Segment]);
     digitalWrite(LATCH_DIO, HIGH);
 }
-
-
-// void loop()
-// {
-//   unsigned long currentMillis = millis();
-
-//   WriteNumberToSegment(0, turnCount);
-//   WriteNumberToSegment(1, turnPlayer + 1);
-//   WriteNumberToSegment(2, totalPoints[0]);
-//   WriteNumberToSegment(3, totalPoints[1]);
-
-//   switch (state)
-//   {
-//     
-//     case 3:
-//       /*  Fase de resultados  */
-      
-//       //calcula o tempo que o jogador levou
-//       turnDuration[turnPlayer] = currentMillis - turnDuration[turnPlayer];
-//       //mostra resultados
-//       if (turnResult[turnPlayer])
-//       {
-//         //Ativa som de acerto
-//         /*tone(3, 32, 1000);
-//           delay(10);
-//           noTone(3);
-//           tone(3, 49, 1000);
-//           delay(10);
-//           noTone(3);*/
-
-//         Serial.println("Right :");
-//         Serial.println(turnPlayer);
-//         totalDuration[turnPlayer] += turnDuration[turnPlayer];
-//       }
-//       else
-//       {
-//         //Ativa som de erro
-//         /*tone(3, 20, 1000);
-//           delay(10);
-//           noTone(3);
-//           tone(3, 20, 1000);
-//           delay(10);
-//           noTone(3);*/
-
-//         Serial.println("Wrong :");
-//         Serial.println(turnPlayer);
-//       }
-
-//       // Se o jogador 2 acabou de jogar, acabou a rodada, e o ponto pode ser calculado
-//       if (turnPlayer == 1)
-//       {
-//         // Jogador 1 acertou
-//         if (turnResult[0] == true)
-//         {
-//           // Jogador 2 acertou
-//           if (turnResult[1] == true)
-//           {
-//             // Jogador 1 foi mais rápido
-//             if (turnDuration[0] < turnDuration[1])
-//             {
-//               Serial.println("Player 1 was faster!");
-//               totalPoints[0] += 1;
-//             }
-//             else
-//             {
-//               Serial.println("Player 2 was faster!");
-//               totalPoints[1] += 1;
-//             }
-//           }
-//           else
-//           {
-//             Serial.println("Player 1 won this round!");
-//             totalPoints[0] += 1;
-//           }
-
-//         }
-//         else if (turnResult[1] == true)
-//         {
-//           Serial.println("Player 2 won this round!");
-//           totalPoints[1] += 1;
-//         }
-//         else
-//         {
-//           Serial.println("No winners!");
-//         }
-//       }
-
-//       turnPlayer = (turnPlayer == 0) ? 1 : 0;
-
-//       if (turnCount < 5)
-//       {
-//         if (turnPlayer == 0)
-//         {
-//           turnCount += 1;
-//         }
-//         RestartSequence();
-//       }
-//       else
-//       {
-//         //Escreve e pisca resultado final da partida
-//         /*WriteNumberToSegment(0, 1);
-//         WriteNumberToSegment(1, totalPoints[0]);
-//         WriteNumberToSegment(2, 2);
-//         WriteNumberToSegment(3, totalPoints[1]);
-//         delay(1000);*/
-        
-//         //Checa empate
-//         if (totalPoints[0] == totalPoints[1])
-//         {
-//           if (totalDuration[0] < totalDuration[1])
-//           {
-//             Serial.println("Player 1 won the game!");
-//           }
-//           else if (totalDuration[0] > totalDuration[1])
-//           {
-//             Serial.println("Player 2 won the game!");
-//           }
-//           else
-//           {
-//             Serial.println("It's a tie!");
-//           }
-//         }
-//         else
-//         {
-//           if (totalPoints[0] > totalPoints[1])
-//           {
-//             Serial.println("Player 1 won the game!");
-//           }
-//           else
-//           {
-//             Serial.println("Player 2 won the game!");
-//           }
-//         }
-
-//         //Botar para piscar o resultado no final e botar um som?
-
-
-//         //input para resetar
-//         if (currentMillis - previousMillis >= interval)
-//         {
-//           previousMillis = currentMillis;
-
-//           if (digitalRead(KEY1) == LOW and digitalRead(KEY2) == LOW and digitalRead(KEY3) == LOW)
-//           {
-//             RestartGame();
-//           }
-//         }       
-//       }
-//       break;
-//     default:
-//       RestartSequence();
-//       break;
-//   }
-// }
-
-
