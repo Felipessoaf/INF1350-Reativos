@@ -3,8 +3,8 @@
   Matricula: 1411716 e 1710563
 */
 
-#include "eventdriven.h"
-#include "app.h"
+#include "MiniProjArduino-EventDriven.h"
+#include "genius.h"
 #include "pindefs.h"
 
 #define TIMERS_LENGTH 10
