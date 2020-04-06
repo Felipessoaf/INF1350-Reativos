@@ -243,8 +243,17 @@ void DisplayInfo()
         WriteNumberToSegment(1, turnPlayer + 1);
         WriteNumberToSegment(2, totalPoints[0]);
         WriteNumberToSegment(3, totalPoints[1]);
+        timer_set (0, 10);
     }
-    timer_set (0, 10);
+    else
+    {
+        //TODO: botar para piscar/escrever 1won/2won?
+        WriteNumberToSegment(0, 1);
+        WriteNumberToSegment(1, totalPoints[0]);
+        WriteNumberToSegment(2, 2);
+        WriteNumberToSegment(3, totalPoints[1]);
+        timer_set (0, 10);
+    }        
 }
 
 void ShowResults()
@@ -330,13 +339,6 @@ void ShowResults()
     }
     else
     {
-        //Escreve e pisca resultado final da partida
-        /*WriteNumberToSegment(0, 1);
-        WriteNumberToSegment(1, totalPoints[0]);
-        WriteNumberToSegment(2, 2);
-        WriteNumberToSegment(3, totalPoints[1]);
-        delay(1000);*/
-
         //Checa empate
         if (totalPoints[0] == totalPoints[1])
         {
