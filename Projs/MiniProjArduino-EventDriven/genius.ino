@@ -76,7 +76,6 @@ void appinit()
     digitalWrite(LED1, HIGH);
     digitalWrite(LED2, HIGH);
     digitalWrite(LED3, HIGH);
-
     RestartGame();
 }
 
@@ -148,7 +147,7 @@ void RandLed()
             else
             {
                 //Led está ligado, deve desligar e setar timer novamente
-                if(digitalRead(currentRandLed == LOW))
+                if(digitalRead(currentRandLed) == LOW)
                 {
                     digitalWrite(currentRandLed, HIGH);
                     timer_set (1, ledInterval);
@@ -161,6 +160,7 @@ void RandLed()
 
                     countSequence++;
                     currentRandLed = -1;
+                    RandLed();
                 }                
             }
         }
@@ -223,17 +223,19 @@ void checkSequence(int led)
 
     if (sequencePlayer[countSequence] != sequenceAnswer[countSequence])
     {
-        ShowResults();
         turnResult[turnPlayer] = false;
-    }
-
-    countSequence++;
-
-    //Acabou o input do jogador
-    if (countSequence == 5)
-    {
         ShowResults();
-        turnResult[turnPlayer] = true;
+    }
+    
+    else{
+      countSequence++;
+  
+      //Acabou o input do jogador
+      if (countSequence == 5)
+      {
+          ShowResults();
+          turnResult[turnPlayer] = true;
+      }
     }
 }
 
