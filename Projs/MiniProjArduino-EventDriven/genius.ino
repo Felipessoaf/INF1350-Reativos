@@ -34,10 +34,9 @@ unsigned long turnDuration[2] = {0, 0};
 unsigned long totalDuration[2] = {0, 0};
 
 // Time
-unsigned long previousMillis = 0;
 unsigned long btnInterval = 200;
 unsigned long ledInterval = 1000;
-unsigned long oldMillisBtns[3] = {0, 0, 0}
+unsigned long oldMillisBtns[3] = {0, 0, 0};
 
 int sequenceAnswer[5];
 int sequencePlayer[5];
@@ -105,7 +104,7 @@ void button_changed (int pin)
     else if(state == 3)
     {
         unsigned long currentMillis = millis();
-        if(currentMillis - oldMillisBtn[0] < btnInterval && currentMillis - oldMillisBtn[1] < btnInterval && currentMillis - oldMillisBtn[2] < btnInterval)
+        if(currentMillis - oldMillisBtns[0] < btnInterval && currentMillis - oldMillisBtns[1] < btnInterval && currentMillis - oldMillisBtns[2] < btnInterval)
         {
             RestartGame();
         }
@@ -138,7 +137,7 @@ void RandLed()
                 currentRandLed = random(LED1, LED3 + 1);
                          
                 //salvando na sequencia
-                sequenceAnswer[countSequence] = randLed; 
+                sequenceAnswer[countSequence] = currentRandLed; 
 
                 //Liga Led
                 digitalWrite(currentRandLed, LOW);
@@ -149,7 +148,7 @@ void RandLed()
             else
             {
                 //Led está ligado, deve desligar e setar timer novamente
-                if(digitalRead(buttons[i]) == LOW)
+                if(digitalRead(currentRandLed == LOW))
                 {
                     digitalWrite(currentRandLed, HIGH);
                     timer_set (1, ledInterval);
@@ -158,7 +157,7 @@ void RandLed()
                 {
                     //Led desligado, atualizar contador da sequencia e passar para o proximo led
                     Serial.println("Sequence :");
-                    Serial.println(randLed);
+                    Serial.println(currentRandLed);
 
                     countSequence++;
                     currentRandLed = -1;
@@ -172,7 +171,7 @@ void RandLed()
             ResetLed();
 
             //grava o tempo inicial do state 2
-            turnDuration[turnPlayer] = currentMillis;
+            turnDuration[turnPlayer] = millis();
         }
     }
     else
@@ -218,6 +217,9 @@ void checkSequence(int led)
     sequencePlayer[countSequence] = led;
     Serial.println("Usuario apertou ");
     Serial.println(led);
+    Serial.println("Correto eh: ");
+    Serial.println(sequenceAnswer[countSequence]);
+
 
     if (sequencePlayer[countSequence] != sequenceAnswer[countSequence])
     {
@@ -261,7 +263,7 @@ void ShowResults()
     state = 3;
 
     //calcula o tempo que o jogador levou
-    turnDuration[turnPlayer] = currentMillis - turnDuration[turnPlayer];    
+    turnDuration[turnPlayer] = millis() - turnDuration[turnPlayer];    
 
     //mostra resultados
     if (turnResult[turnPlayer])
