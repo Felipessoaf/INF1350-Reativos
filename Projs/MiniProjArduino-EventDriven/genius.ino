@@ -44,14 +44,6 @@ int sequencePlayer[5];
 //Timers
 //0: Display
 //1: Led Rand
-//2: 
-//3: 
-//4: 
-//5: 
-//6: 
-//7: 
-//8: 
-//9: 
 
 void appinit()
 {
