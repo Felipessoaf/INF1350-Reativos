@@ -10,6 +10,8 @@ local GameTexts = {
 local function newblip (vel, color)
     local x, y = 0, 0
     local tam = 40
+    local loops = 0
+    local immortal = false
 
     return {
         update = function (dt)
@@ -18,11 +20,16 @@ local function newblip (vel, color)
             if x > width then
                 -- volta para a esquerda da janela
                 x = 0
+                loops = loops + 1
+                if loops >= 5 then
+                    immortal = true
+                    tam = 80
+                end
             end
         end,
 
         affected = function (pos)
-            if pos>x and pos<x+tam then
+            if pos>x and pos<x+tam and not immortal then
             -- "pegou" o blip
                 return true
             else
@@ -36,9 +43,9 @@ local function newblip (vel, color)
             else
                 love.graphics.setColor(unpack(color))
             end
-            love.graphics.rectangle("fill", x, y, tam, 10)
+            love.graphics.rectangle("fill", x, y, tam, tam/4)
             love.graphics.setColor(1, 1, 1)
-            love.graphics.rectangle("line", x, y, tam, 10)
+            love.graphics.rectangle("line", x, y, tam, tam/4)
         end
     }
     end
