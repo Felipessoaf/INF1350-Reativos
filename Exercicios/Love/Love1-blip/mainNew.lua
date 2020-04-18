@@ -1,9 +1,5 @@
--- Nome: Felipe Pessoa e Guilherme Bizzo
--- Matricula: 1411716 e 1710563
-
 local blips = {}
 local player
-local lastSpawnTime = 0
 local GameState = 1
 local GameTexts = {
     "INIMIGOS FALTANDO: "..#blips,
@@ -50,10 +46,6 @@ local function newblip (vel, color)
             love.graphics.rectangle("fill", x, y, tam, tam/4)
             love.graphics.setColor(1, 1, 1)
             love.graphics.rectangle("line", x, y, tam, tam/4)
-        end,
-
-        isImmortal = function()
-            return immortal
         end
     }
     end
@@ -85,7 +77,7 @@ local function newplayer ()
 end
 
 function love.keypressed (key)
-    if key == 'space' and GameState == 1 then
+    if key == 'space' then
         pos = player.try()
 
         for i,blip in pairs(blips) do
@@ -138,31 +130,10 @@ function love.draw()
 end
 
 function love.update(dt)
-    if GameState == 1 then
-        -- Tenta spawnar um blip
-        if love.timer.getTime() > lastSpawnTime + 5 then
-            lastSpawnTime = love.timer.getTime()
-            if math.random(1,10) <= 5 then
-                table.insert(blips, newblip(math.random(1,10), {243/255, 245/255, 157/255}))
+    player.update(dt)
 
-                GameTexts[1] = "INIMIGOS FALTANDO: "..#blips
-            end
-        end
-
-        player.update(dt)
-
-        local immortalCount = 0
-
-        for i,blip in pairs(blips) do
-            blip.update(dt)
-            if blip.isImmortal() then  
-                immortalCount = immortalCount + 1
-            end
-        end
-
-        if immortalCount >= 3 then 
-            GameState = 3
-        end
+    for i,blip in pairs(blips) do
+        blip.update(dt)
     end
 end
   
