@@ -1,6 +1,11 @@
+local function wait()
+  
+
+
 local function newblip (vel)
   local x, y = 0, 0
   local width, height = love.graphics.getDimensions( )
+  
   local function up()
     while true do
       x = x+vel
@@ -8,9 +13,10 @@ local function newblip (vel)
         -- volta para a esquerda da janela
         x = 0
       end
-      coroutine.yield ()
+      wait ()
     end
   end
+  
   return {
     update = coroutine.wrap(up),
     affected = function (pos)
