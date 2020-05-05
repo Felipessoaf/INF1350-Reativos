@@ -1,6 +1,12 @@
-local function wait()
-  
+--Nome: Felipe Pessoa e Guilherme Bizzo
+--Matricula: 1411716 e 1710563
 
+local function wait(seconds)
+    while seconds > 0 do
+      local tempo = coroutine.yield()
+      seconds = seconds - tempo
+    end
+end
 
 local function newblip (vel)
   local x, y = 0, 0
@@ -8,12 +14,12 @@ local function newblip (vel)
   
   local function up()
     while true do
-      x = x+vel
+      x = x+2
       if x > width then
         -- volta para a esquerda da janela
         x = 0
       end
-      wait ()
+      wait(vel/100)
     end
   end
   
@@ -83,7 +89,7 @@ end
 function love.update(dt)
   player.update(dt)
   for i = 1,#listabls do
-    listabls[i].update()
+    listabls[i].update(dt)
   end
 end
   
