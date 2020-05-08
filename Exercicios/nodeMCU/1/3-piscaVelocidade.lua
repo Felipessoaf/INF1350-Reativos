@@ -2,6 +2,9 @@ local led1 = 0
 local sw1 = 3
 local sw2 = 4
 
+gpio.mode(sw1,gpio.INT,gpio.PULLUP)
+gpio.mode(sw2,gpio.INT,gpio.PULLUP)
+
 local function disparapiscapisca (led, tempo)
     local apagado = true
 
