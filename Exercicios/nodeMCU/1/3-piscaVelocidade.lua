@@ -33,6 +33,7 @@ local function disparapiscapisca (led, tempo)
             tempo = 50
         end
         mytimer:register(tempo, tmr.ALARM_AUTO, piscapisca)
+        mytimer:start()
     end,
     function ()
         mytimer:unregister()
@@ -41,6 +42,7 @@ local function disparapiscapisca (led, tempo)
             tempo = 2000
         end
         mytimer:register(tempo, tmr.ALARM_AUTO, piscapisca)
+        mytimer:start()
     end
 
 end
