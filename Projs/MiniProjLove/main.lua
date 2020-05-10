@@ -1,6 +1,11 @@
 -- Nome: Felipe Pessoa e Guilherme Bizzo
 -- Matricula: 1411716 e 1710563
 
+--TODO: 
+-- tirar ponto quando um inimigo chega a determinada altura (e remover esse inimigo)
+-- mudar insidePath para pegar o inimigo mais à direita e mais à esquerda para fazer as contas em vez de pegar o primeiro e ultimo da tabela
+
+
 local invadersManager
 local player
 local shot
@@ -146,6 +151,7 @@ local function createShot(x, y, vel)
             for i,invader in pairs(invadersManager.invaders) do
                 if checkCollision(x, y, width, height, invader.getPosX(), invader.getPosY(), invader.getWidth(), invader.getHeight()) then
                     table.remove(invadersManager.invaders, i)
+                    player.score = player.score + 10
                     return true
                 end
             end
@@ -168,6 +174,7 @@ local function newplayer ()
     local x, y = (screenWidth - width)/2, screenHeight - height
     local vel = 300
     local shots = {}
+    local score = 0
 
     return {
         update = function (dt)
@@ -210,9 +217,7 @@ local function newplayer ()
             end
         end,
 
-        removeShot = function (shot)
-
-        end
+        score = score
     }
 end
 
@@ -230,6 +235,9 @@ function love.draw()
     player.draw()
 
     invadersManager.draw()    
+
+    love.graphics.setNewFont(25)
+    love.graphics.print("Score: " .. player.score, 10, 10)
 end
 
 function love.update(dt)
