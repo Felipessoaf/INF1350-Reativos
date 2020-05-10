@@ -146,8 +146,11 @@ local function createShot(x, y, vel)
             for i,invader in pairs(invadersManager.invaders) do
                 if checkCollision(x, y, width, height, invader.getPosX(), invader.getPosY(), invader.getWidth(), invader.getHeight()) then
                     table.remove(invadersManager.invaders, i)
+                    return true
                 end
             end
+
+            return y < 0
         end,
         
         draw = function ()
@@ -183,7 +186,9 @@ local function newplayer ()
             end
 
             for i,shot in pairs(shots) do
-                shot.update(dt)
+                if shot.update(dt) then
+                    table.remove(shots, i)
+                end
             end
         end,
 
@@ -203,6 +208,10 @@ local function newplayer ()
             for i,shot in pairs(shots) do
                 shot.draw()
             end
+        end,
+
+        removeShot = function (shot)
+
         end
     }
 end
