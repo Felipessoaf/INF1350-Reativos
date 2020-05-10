@@ -1,11 +1,6 @@
 -- Nome: Felipe Pessoa e Guilherme Bizzo
 -- Matricula: 1411716 e 1710563
 
---TODO: 
--- tirar ponto quando um inimigo chega a determinada altura (e remover esse inimigo)
--- mudar insidePath para pegar o inimigo mais à direita e mais à esquerda para fazer as contas em vez de pegar o primeiro e ultimo da tabela
-
-
 local invadersManager
 local player
 local shot
@@ -101,8 +96,34 @@ local function createInvaders()
         end
     end
 
+    local function getLeftmost()
+        local x, width = invaders[1].getPosX(), invaders[1].getWidth()
+        for i,invader in pairs(invaders) do
+            if invader.getPosX() < x then
+                x = invader.getPosX()
+                width = invader.getWidth()
+            end
+        end
+
+        return x, width
+    end
+
+    local function getRightmost()
+        local x, width = invaders[1].getPosX(), invaders[1].getWidth()
+        for i,invader in pairs(invaders) do
+            if invader.getPosX() > x then
+                x = invader.getPosX()
+                width = invader.getWidth()
+            end
+        end
+
+        return x, width
+    end
+
     local function insidePath()
-        return invaders[#invaders].getPosX() < screenWidth - invaders[#invaders].getWidth()*2 and invaders[1].getPosX() > invaders[#invaders].getWidth()
+        local leftmostX, leftmostWidth = getLeftmost()
+        local rightmostX, rightmostWidth = getRightmost()
+        return rightmostX < screenWidth - rightmostWidth*2 and leftmostX > leftmostWidth
     end
 
     return {
