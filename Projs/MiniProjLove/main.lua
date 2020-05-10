@@ -42,9 +42,13 @@ local function newInvader (x, y, color, vel)
             return width
         end,
 
-        setDirection = function(val)
-            direction = val
+        changeDirection = function()
+            direction = direction * -1
         end,
+
+        changeLine = function()
+            y = y + 20
+        end
         
         --affected = function (pos)
             --if pos>x and pos<x+50 then
@@ -61,6 +65,7 @@ end
 local function createInvaders()
     local screenWidth, screenHeight = love.graphics.getDimensions()
     local invaders = {}
+    local canSwitchDirection = false
 
     local colors = {
         {1, 0, 238/255}, --rosa
@@ -76,22 +81,24 @@ local function createInvaders()
         end
     end
 
+    local function insidePath()
+        return invaders[#invaders].getPosX() < screenWidth - invaders[#invaders].getWidth()*2 and invaders[1].getPosX() > invaders[#invaders].getWidth()
+    end
+
     return {
-        update = function(dt)
-            -- ultimo invader passou da tela
-            if invaders[#invaders].getPosX() > screenWidth - invaders[#invaders].getWidth()*2  then
-                --descer
+        update = function(dt)            
+            if not insidePath() and canSwitchDirection then
+                canSwitchDirection = false
                 for i,invader in pairs(invaders) do
-                    invader.setDirection(-1)
+                    --troca direçao
+                    invader.changeDirection()
+                    --descer
+                    invader.changeLine()
                 end
             end
             
-            -- primeiro invader passou da tela
-            if invaders[1].getPosX() < invaders[#invaders].getWidth() then
-                --descer
-                for i,invader in pairs(invaders) do
-                    invader.setDirection(1)
-                end
+            if insidePath() then
+                canSwitchDirection = true
             end
 
             for i,invader in pairs(invaders) do
