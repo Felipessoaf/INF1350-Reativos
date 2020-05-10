@@ -6,6 +6,13 @@ local player
 local shot
 local GameState = 0 -- 0, se estiver no menu; 1, se o jogo estiver em andamento; 2, se o jogador vencer ou perder
 
+local function checkCollision(xa, ya, wa, ha, xb, yb, wb, hb)
+    return xa + wa >= xb and 
+        xa <= xb + wb and 
+        ya + ha >= yb and 
+        ya <= yb + hb
+end
+
 local function wait(seconds)
     while seconds > 0 do
       local tempo = coroutine.yield()
@@ -38,8 +45,16 @@ local function newInvader (x, y, color, vel)
             return x
         end,
 
+        getPosY = function()
+            return y
+        end,
+
         getWidth = function()
             return width
+        end,
+
+        getHeight = function()
+            return height
         end,
 
         changeDirection = function()
@@ -86,7 +101,11 @@ local function createInvaders()
     end
 
     return {
-        update = function(dt)            
+        update = function(dt)     
+            if #invaders == 0 then
+                return
+            end
+            
             if not insidePath() and canSwitchDirection then
                 canSwitchDirection = false
                 for i,invader in pairs(invaders) do
@@ -110,7 +129,9 @@ local function createInvaders()
             for i,invader in pairs(invaders) do
                 invader.draw()
             end
-        end
+        end,
+
+        invaders = invaders
     }
 end
 
@@ -121,6 +142,12 @@ local function createShot(x, y, vel)
     return {
         update = function (dt)
             y = y - vel * dt
+
+            for i,invader in pairs(invadersManager.invaders) do
+                if checkCollision(x, y, width, height, invader.getPosX(), invader.getPosY(), invader.getWidth(), invader.getHeight()) then
+                    table.remove(invadersManager.invaders, i)
+                end
+            end
         end,
         
         draw = function ()
