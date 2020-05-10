@@ -1,24 +1,49 @@
 -- Nome: Felipe Pessoa e Guilherme Bizzo
 -- Matricula: 1411716 e 1710563
 
-local invaders = {}
+local invadersManager
 local player
 local shot
 local GameState = 0 -- 0, se estiver no menu; 1, se o jogo estiver em andamento; 2, se o jogador vencer ou perder
 
+local function wait(seconds)
+    while seconds > 0 do
+      local tempo = coroutine.yield()
+      seconds = seconds - tempo
+    end
+end
+
 local function newInvader (x, y, color, vel)
-    local tam = 40
+    local width, height = 40, 10
+    local direction = 1
+  
+    local function move()
+      while true do
+        x = x + (20 * direction)
+        wait(vel)
+      end
+    end
 
     return {
-        update = function (dt)
-        
-        end,
+        update = coroutine.wrap(move),
 
         draw = function ()
             love.graphics.setColor(unpack(color))
-            love.graphics.rectangle("fill", x, y, tam, tam/4)
+            love.graphics.rectangle("fill", x, y, width, height)
             love.graphics.setColor(1, 1, 1)
-            love.graphics.rectangle("line", x, y, tam, tam/4)
+            love.graphics.rectangle("line", x, y, width, height)
+        end,
+
+        getPosX = function()
+            return x
+        end,
+
+        getWidth = function()
+            return width
+        end,
+
+        setDirection = function(val)
+            direction = val
         end,
         
         --affected = function (pos)
@@ -30,19 +55,86 @@ local function newInvader (x, y, color, vel)
                 --return false
             --end
         --end
+    }    
+end
+
+local function createInvaders()
+    local screenWidth, screenHeight = love.graphics.getDimensions()
+    local invaders = {}
+
+    local colors = {
+        {1, 0, 238/255}, --rosa
+        {0, 234/255, 1}, --azul bebe  
+        {0, 234/255, 1}, --azul bebe  
+        {0, 252/255, 29/255}, --verde    
+        {0, 252/255, 29/255}, --verde    
     }
-    
-    
+
+    for i=1,5 do
+        for j=1,10 do
+            table.insert(invaders, newInvader(j * 50, i * 50, colors[i], 0.2))
+        end
     end
+
+    return {
+        update = function(dt)
+            -- ultimo invader passou da tela
+            if invaders[#invaders].getPosX() > screenWidth - invaders[#invaders].getWidth()*2  then
+                --descer
+                for i,invader in pairs(invaders) do
+                    invader.setDirection(-1)
+                end
+            end
+            
+            -- primeiro invader passou da tela
+            if invaders[1].getPosX() < invaders[#invaders].getWidth() then
+                --descer
+                for i,invader in pairs(invaders) do
+                    invader.setDirection(1)
+                end
+            end
+
+            for i,invader in pairs(invaders) do
+                invader.update(dt)
+            end
+        end,
+
+        draw = function ()
+            for i,invader in pairs(invaders) do
+                invader.draw()
+            end
+        end
+    }
+end
 
 local function newplayer ()
     local screenWidth, screenHeight = love.graphics.getDimensions()
     local width, height = 50, 20
     local x, y = (screenWidth - width)/2, screenHeight - height
+    local vel = 10
 
     return {
         update = function (dt)
+            if love.keyboard.isDown("a") then
+                x = x - vel
+                if x < 0 then
+                    x = 0
+                end
+            end
             
+            if love.keyboard.isDown("d") then
+                x = x + vel
+                if x > screenWidth - width then
+                    x = screenWidth - width
+                end
+            end
+        end,
+
+        keypressed = function(key)
+            if key == 'space' then
+                --atira--
+                --shot.draw()
+            end
         end,
         
         draw = function ()
@@ -74,46 +166,23 @@ end
 --end
 
 function love.keypressed (key)
-    if key == 'space' then
-      --atira--
-      --shot.draw()
-    end
-    if key == 'a' then
-      --player.x -= 10
-    end
-    if key == 'd' then
-      --player.x += 10
-    end
+    player.keypressed(key)
 end
-
 
 function love.load()
     player =  newplayer()
-
-    local colors = {
-        {1, 0, 238/255}, --rosa
-        {0, 234/255, 1}, --azul bebe  
-        {0, 234/255, 1}, --azul bebe  
-        {0, 252/255, 29/255}, --verde    
-        {0, 252/255, 29/255}, --verde    
-    }
     
-    for i=1,5 do
-        for j=1,10 do
-            table.insert(invaders, newInvader(j * 50, i * 50, colors[i]))
-        end
-    end
+    invadersManager = createInvaders()
 end
 
 function love.draw()
     player.draw()
 
-    for i,invader in pairs(invaders) do
-        invader.draw()
-    end
-    
+    invadersManager.draw()    
 end
 
 function love.update(dt)
     player.update(dt)
+
+    invadersManager.update(dt)   
 end
