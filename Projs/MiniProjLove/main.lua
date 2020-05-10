@@ -114,33 +114,56 @@ local function createInvaders()
     }
 end
 
+local function createShot(x, y, vel)
+    local screenWidth, screenHeight = love.graphics.getDimensions()
+    local width, height = 5, 10
+
+    return {
+        update = function (dt)
+            y = y - vel * dt
+        end,
+        
+        draw = function ()
+            love.graphics.setColor(246/255, 1, 0)
+            love.graphics.rectangle("fill", x, y, width, height)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.rectangle("line", x, y, width, height)
+        end
+    }
+end
+
 local function newplayer ()
     local screenWidth, screenHeight = love.graphics.getDimensions()
     local width, height = 50, 20
     local x, y = (screenWidth - width)/2, screenHeight - height
-    local vel = 10
+    local vel = 300
+    local shots = {}
 
     return {
         update = function (dt)
             if love.keyboard.isDown("a") then
-                x = x - vel
+                x = x - vel * dt
                 if x < 0 then
                     x = 0
                 end
             end
             
             if love.keyboard.isDown("d") then
-                x = x + vel
+                x = x + vel * dt
                 if x > screenWidth - width then
                     x = screenWidth - width
                 end
+            end
+
+            for i,shot in pairs(shots) do
+                shot.update(dt)
             end
         end,
 
         keypressed = function(key)
             if key == 'space' then
                 --atira--
-                --shot.draw()
+                table.insert( shots,createShot(x, y, 500))
             end
         end,
         
@@ -149,28 +172,13 @@ local function newplayer ()
             love.graphics.rectangle("fill", x, y, width, height)
             love.graphics.setColor(1, 1, 1)
             love.graphics.rectangle("line", x, y, width, height)
+
+            for i,shot in pairs(shots) do
+                shot.draw()
+            end
         end
     }
 end
-
---local function shot()
---  local screenWidth, screenHeight = love.graphics.getDimensions()
---  local width, height = 20, 40
---  local x, y = (screenWidth - width)/2, screenHeight - height + 20 
-
---  return {
---      update = function (dt)
-          
---      end,
-      
---      draw = function ()
---          love.graphics.setColor(0, 1, 34/255)
---          love.graphics.rectangle("fill", x, y, width, height)
---          love.graphics.setColor(1, 1, 1)
---         love.graphics.rectangle("line", x, y, width, height)
---      end
---  }
---end
 
 function love.keypressed (key)
     player.keypressed(key)
