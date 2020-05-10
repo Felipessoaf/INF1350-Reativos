@@ -148,6 +148,10 @@ local function createInvaders()
 
             for i,invader in pairs(invaders) do
                 invader.update(dt)
+                if invader.getPosY() > screenHeight - 100 then
+                    table.remove(invaders, i)
+                    player.score = player.score - 10
+                end
             end
         end,
 
