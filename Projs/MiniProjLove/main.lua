@@ -257,16 +257,39 @@ function love.load()
 end
 
 function love.draw()
-    player.draw()
+    local screenWidth, screenHeight = love.graphics.getDimensions()
 
-    invadersManager.draw()    
+    if GameState == 0 then    
+        --Menu
+        love.graphics.setColor(1, 1, 1)
+        font = love.graphics.setNewFont(40)
+        love.graphics.print("Menu", screenWidth/2 - font:getWidth("Menu")/2, screenHeight * 1/4)
+        font = love.graphics.setNewFont(25)
+        love.graphics.print("Press 'space' to start", screenWidth/2 - font:getWidth("Press 'space' to start")/2, screenHeight/2)
+    elseif GameState == 1 then    
+        --Jogo
+        player.draw()
 
-    love.graphics.setNewFont(25)
-    love.graphics.print("Score: " .. player.score, 10, 10)
+        invadersManager.draw()    
+
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.setNewFont(25)
+        love.graphics.print("Score: " .. player.score, 10, 10)
+    elseif GameState == 2 then    
+        --Resultados
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.setNewFont(40)
+        love.graphics.print("Score: " .. player.score, screenWidth/2, screenHeight/2)
+    end
 end
 
 function love.update(dt)
-    player.update(dt)
-
-    invadersManager.update(dt)   
+    if GameState == 1 then
+        player.update(dt)
+    
+        invadersManager.update(dt)   
+        if #invadersManager.invaders == 0 then
+            GameState = 2
+        end
+    end
 end
