@@ -1,11 +1,15 @@
 -- Nome: Felipe Pessoa e Guilherme Bizzo
 -- Matricula: 1411716 e 1710563
 
+-- Objetos
 local invadersManager
 local player
-local shot
-local GameState -- 0, se estiver no menu; 1, se o jogo estiver em andamento; 2, quando o jogo acabar
-local Difficulty -- 1 (easy), 2 (medium) or 3 (hard)
+
+-- 0, se estiver no menu; 1, se o jogo estiver em andamento; 2, quando o jogo acabar
+local GameState
+
+-- 1 (easy), 2 (medium) or 3 (hard)
+local Difficulty 
 
 local function checkCollision(xa, ya, wa, ha, xb, yb, wb, hb)
     return xa + wa >= xb and 
