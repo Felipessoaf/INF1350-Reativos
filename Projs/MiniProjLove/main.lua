@@ -81,7 +81,7 @@ local function createInvaders()
     local screenWidth, screenHeight = love.graphics.getDimensions()
     local invaders = {}
     local canSwitchDirection = false
-    local vel = 0.2
+    local difficulty = 0.2
 
     local colors = {
         {1, 0, 238/255}, --rosa
@@ -90,10 +90,24 @@ local function createInvaders()
         {0, 252/255, 29/255}, --verde    
         {0, 252/255, 29/255}, --verde    
     }
-
+    
+    --Deve funcionar apenas no GameState = 0
+    keypressed = function(key)
+      if key == '1' then
+        --Facil
+        difficulty = 0.2
+      elseif key == '2' then
+        --Medio
+        difficulty = 0.1
+      elseif key == '3' then
+        --Dificil
+        difficulty = 0.05
+      end
+    end
+      
     for i=1,5 do
         for j=1,10 do
-            table.insert(invaders, newInvader(j * 50, i * 50, colors[i], vel))
+            table.insert(invaders, newInvader(j * 50, i * 50, colors[i], difficulty))
         end
     end
 
