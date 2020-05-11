@@ -4,7 +4,8 @@
 local invadersManager
 local player
 local shot
-local GameState = 0 -- 0, se estiver no menu; 1, se o jogo estiver em andamento; 2, quando o jogo acabar
+local GameState -- 0, se estiver no menu; 1, se o jogo estiver em andamento; 2, quando o jogo acabar
+local Difficulty -- 1 (easy), 2 (medium) or 3 (hard)
 
 local function checkCollision(xa, ya, wa, ha, xb, yb, wb, hb)
     return xa + wa >= xb and 
@@ -15,8 +16,8 @@ end
 
 local function wait(seconds)
     while seconds > 0 do
-      local tempo = coroutine.yield()
-      seconds = seconds - tempo
+        local tempo = coroutine.yield()
+        seconds = seconds - tempo
     end
 end
 
@@ -25,10 +26,10 @@ local function newInvader (x, y, color, vel)
     local direction = 1
   
     local function move()
-      while true do
-        x = x + (20 * direction)
-        wait(vel)
-      end
+        while true do
+            x = x + (20 * direction)
+            wait(vel)
+        end
     end
 
     return {
@@ -64,16 +65,6 @@ local function newInvader (x, y, color, vel)
         changeLine = function()
             y = y + 20
         end
-        
-        --affected = function (pos)
-            --if pos>x and pos<x+50 then
-            -- atingiu o invader --
-                --return true
-            --else
-            -- errou o tiro --
-                --return false
-            --end
-        --end
     }    
 end
 
@@ -91,20 +82,17 @@ local function createInvaders()
         {0, 252/255, 29/255}, --verde    
     }
     
-    --Deve funcionar apenas no GameState = 0
-    keypressed = function(key)
-      if key == '1' then
+    if Difficulty == "1" then
         --Facil
         difficulty = 0.2
-      elseif key == '2' then
+    elseif Difficulty == "2" then
         --Medio
         difficulty = 0.1
-      elseif key == '3' then
+    elseif Difficulty == "3" then
         --Dificil
         difficulty = 0.05
-      end
     end
-      
+        
     for i=1,5 do
         for j=1,10 do
             table.insert(invaders, newInvader(j * 50, i * 50, colors[i], difficulty))
@@ -261,23 +249,31 @@ local function newplayer ()
     }
 end
 
-function love.keypressed (key)
-  
-  player.keypressed(key)
-  if key == 'space' then
-    if GameState == 0 then
-      GameState = 1
-    elseif GameState == 2 then
-      love.load()
-      GameState = 0
+function love.keypressed (key)  
+    if player ~= nil then
+        player.keypressed(key)
     end
-  end
+
+    if GameState == 0 then
+        if key == '1' or key == '2' or key == '3' then
+            Difficulty = key
+            BeginGame()
+            GameState = 1
+        end
+    elseif GameState == 2 then
+        if key == 'space' then
+            love.load()
+        end
+    end
+end
+
+function BeginGame()
+    player =  newplayer()        
+    invadersManager = createInvaders()
 end
 
 function love.load()
-  player =  newplayer()
-    
-  invadersManager = createInvaders()
+    GameState = 0
 end
 
 function love.draw()
@@ -286,10 +282,14 @@ function love.draw()
     if GameState == 0 then    
         --Menu
         love.graphics.setColor(1, 1, 1)
+
         font = love.graphics.setNewFont(40)
-        love.graphics.print("Menu", screenWidth/2 - font:getWidth("Menu")/2, screenHeight * 1/4)
+        local text = "Menu"
+        love.graphics.print(text, screenWidth/2 - font:getWidth(text)/2, screenHeight * 1/4)
+
         font = love.graphics.setNewFont(25)
-        love.graphics.print("Press 'space' to start", screenWidth/2 - font:getWidth("Press 'space' to start")/2, screenHeight/2)
+        text = "Press 1 (easy), 2 (medium) or 3 (hard)"
+        love.graphics.print(text, screenWidth/2 - font:getWidth(text)/2, screenHeight/2)
     elseif GameState == 1 then    
         --Jogo
         player.draw()
@@ -302,10 +302,14 @@ function love.draw()
     elseif GameState == 2 then    
         --Resultados
         love.graphics.setColor(1, 1, 1)
+
         font = love.graphics.setNewFont(40)
-        love.graphics.print("Score: " .. player.score, screenWidth/2 - font:getWidth("Score: " .. player.score)/2, screenHeight/2)
+        local text = "Score: " .. player.score
+        love.graphics.print(text, screenWidth/2 - font:getWidth(text)/2, screenHeight/2)
+
         font = love.graphics.setNewFont(25)
-        love.graphics.print("Press 'space' to go back to menu", screenWidth/2 - font:getWidth("Press 'space' to go back to menu")/2, 2*screenHeight/3)
+        text = "Press 'space' to go back to menu"
+        love.graphics.print(text, screenWidth/2 - font:getWidth(text)/2, 2*screenHeight/3)
     end
 end
 
