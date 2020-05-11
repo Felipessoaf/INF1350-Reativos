@@ -4,7 +4,7 @@
 local invadersManager
 local player
 local shot
-local GameState = 0 -- 0, se estiver no menu; 1, se o jogo estiver em andamento; 2, se o jogador vencer ou perder
+local GameState = 0 -- 0, se estiver no menu; 1, se o jogo estiver em andamento; 2, quando o jogo acabar
 
 local function checkCollision(xa, ya, wa, ha, xb, yb, wb, hb)
     return xa + wa >= xb and 
@@ -81,6 +81,7 @@ local function createInvaders()
     local screenWidth, screenHeight = love.graphics.getDimensions()
     local invaders = {}
     local canSwitchDirection = false
+    local vel = 0.2
 
     local colors = {
         {1, 0, 238/255}, --rosa
@@ -92,7 +93,7 @@ local function createInvaders()
 
     for i=1,5 do
         for j=1,10 do
-            table.insert(invaders, newInvader(j * 50, i * 50, colors[i], 0.2))
+            table.insert(invaders, newInvader(j * 50, i * 50, colors[i], vel))
         end
     end
 
@@ -247,13 +248,22 @@ local function newplayer ()
 end
 
 function love.keypressed (key)
-    player.keypressed(key)
+  
+  player.keypressed(key)
+  if key == 'space' then
+    if GameState == 0 then
+      GameState = 1
+    elseif GameState == 2 then
+      love.load()
+      GameState = 0
+    end
+  end
 end
 
 function love.load()
-    player =  newplayer()
+  player =  newplayer()
     
-    invadersManager = createInvaders()
+  invadersManager = createInvaders()
 end
 
 function love.draw()
@@ -278,8 +288,10 @@ function love.draw()
     elseif GameState == 2 then    
         --Resultados
         love.graphics.setColor(1, 1, 1)
-        love.graphics.setNewFont(40)
-        love.graphics.print("Score: " .. player.score, screenWidth/2, screenHeight/2)
+        font = love.graphics.setNewFont(40)
+        love.graphics.print("Score: " .. player.score, screenWidth/2 - font:getWidth("Score: " .. player.score)/2, screenHeight/2)
+        font = love.graphics.setNewFont(25)
+        love.graphics.print("Press 'space' to go back to menu", screenWidth/2 - font:getWidth("Press 'space' to go back to menu")/2, 2*screenHeight/3)
     end
 end
 
