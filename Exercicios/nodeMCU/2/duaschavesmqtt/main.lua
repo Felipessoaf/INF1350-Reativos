@@ -28,7 +28,7 @@ function love.load ()
 
   mqtt_client = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
   mqtt_client:connect("cliente love")
-  mqtt_client:subscribe({"paralove"})
+  mqtt_client:subscribe({"paraloveFG"})
 end
 
 local function nodisco (botao, mx, my)
@@ -47,7 +47,7 @@ function love.mousepressed (mx, my)
   for i = 1, 2 do
     if nodisco (botoes[i], mx, my) then
       print ("no disco ", i)
-      mqtt_client:publish("paranode", i)
+      mqtt_client:publish("paranodeFG", i)
       mudaestado(i)
     end
   end
