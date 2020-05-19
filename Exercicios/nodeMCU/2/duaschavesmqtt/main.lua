@@ -17,6 +17,19 @@ local botoes = {}
 local function mqttcb (msg)
   print(msg)
 end
+  
+local function novaInscricao (c)
+    local msgsrec = 0
+    print("novaInscricao!")
+  
+    local function novamsg (c, t, m)
+        print("chegou!")
+        -- print ("mensagem ".. msgsrec .. ", topico: ".. t .. ", dados: " .. m)
+        msgsrec = msgsrec + 1
+        mudaestado(m == "1" and 1 or 2)
+    end
+    c:on("message", novamsg)
+end
 
 function love.load ()
   love.window.setMode(TAM,TAM)
@@ -27,8 +40,8 @@ function love.load ()
   end
 
   mqtt_client = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
-  mqtt_client:connect("cliente love")
-  mqtt_client:subscribe({"paraloveFG"})
+  mqtt_client:connect("cliente love FG")
+  mqtt_client:subscribe({"paraloveFG"}, 0, novaInscricao)
 end
 
 local function nodisco (botao, mx, my)

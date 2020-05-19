@@ -18,10 +18,16 @@ gpio.write(led2, gpio.HIGH);
 gpio.mode(sw1,gpio.INT,gpio.PULLUP)
 gpio.mode(sw2,gpio.INT,gpio.PULLUP)
 
--- function publica(c)
---   c:publish("inf1350-a","alo de " .. meuid,0,0, 
---             function(client) print("mandou!") end)
--- end
+function criaPublica(c,m)
+    return function()
+        publica(c,m)
+    end
+end
+
+function publica(c, m)
+    c:publish("paraloveFG",m,0,0, 
+            function(client) print("mandou!") end)
+end
 
 function novaInscricao (c)
   local msgsrec = 0
@@ -50,9 +56,12 @@ function novaInscricao (c)
   c:on("message", novamsg)
 end
 
-function conectado (client)
---   publica(client)
-  client:subscribe("paranodeFG", 0, novaInscricao)
+function conectado (newclient)
+    client = newclient
+    client:subscribe("paranodeFG", 0, novaInscricao)
+
+    gpio.trig(sw1, "down", criaPublica(client, 1))
+    gpio.trig(sw2, "down", criaPublica(client, 2))
 end 
 
 m:connect("broker.hivemq.com", 1883, false, 
