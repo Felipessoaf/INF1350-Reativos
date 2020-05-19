@@ -13,22 +13,19 @@ cores[2] = {
   {0.35,0.4,0.2}
 }
 local botoes = {}
-  
-local function mqttcb (msg)
-  print(msg)
+
+local function mudaestado (i)
+  if botoes[i].cores == cores[i][1] then
+    botoes[i].cores = cores[i][2]
+  else
+    botoes[i].cores = cores[i][1]
+  end
 end
   
-local function novaInscricao (c)
-    local msgsrec = 0
-    print("novaInscricao!")
-  
-    local function novamsg (c, t, m)
-        print("chegou!")
-        -- print ("mensagem ".. msgsrec .. ", topico: ".. t .. ", dados: " .. m)
-        msgsrec = msgsrec + 1
-        mudaestado(m == "1" and 1 or 2)
+local function mqttcb (topic, msg)
+    if topic == "paraloveFG" then
+        mudaestado(msg == "1" and 1 or 2)
     end
-    c:on("message", novamsg)
 end
 
 function love.load ()
@@ -41,19 +38,11 @@ function love.load ()
 
   mqtt_client = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
   mqtt_client:connect("cliente love FG")
-  mqtt_client:subscribe({"paraloveFG"}, 0, novaInscricao)
+  mqtt_client:subscribe({"paraloveFG"})
 end
 
 local function nodisco (botao, mx, my)
   return math.sqrt((mx-botao.x)^2 + (my-botao.y)^2) < botao.r
-end
-
-local function mudaestado (i)
-  if botoes[i].cores == cores[i][1] then
-    botoes[i].cores = cores[i][2]
-  else
-    botoes[i].cores = cores[i][1]
-  end
 end
 
 function love.mousepressed (mx, my)
