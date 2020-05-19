@@ -1,6 +1,6 @@
 wificonf = {
-    ssid = "nomedarede",
-    pwd = "senha",
+    ssid = "NOSDAKI24",
+    pwd = "eutuelesloki",
     save = false,
     got_ip_cb = function (con)
                   print (con.IP)

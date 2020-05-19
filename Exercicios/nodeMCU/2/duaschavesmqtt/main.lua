@@ -1,3 +1,5 @@
+--Nome: Felipe Pessoa e Guilherme Bizzo
+--Matricula: 1411716 e 1710563
 
 local mqtt = require("mqtt_library")
 local TAM = 400
