@@ -8,6 +8,9 @@
 -- Parallel API example
 --------------------------------------------------------------------
 
+--Nome: Felipe Pessoa e Guilherme Bizzo
+--Matricula: 1411716 e 1710563
+
 local tasks = require("tasks")
 
 local await = tasks.await
@@ -62,6 +65,7 @@ function love.load()
         function()
             while true do  
                 local game = tasks.par_or(function() 
+                    local canPlay = true
                     print("novo jogo!")
                     await_ms(500)
 
@@ -72,7 +76,19 @@ function love.load()
                             showswitch(seq[i])
                             await_ms(500)
                         end
+                    end, 
+                        function() 
+                            local key = await("keypressed")
+                            while key ~= "n" do
+                                key = await("keypressed")
+                            end
+                            canPlay = false
+                            print("sequence restart")
+                        end
+                    )
+                    sequence()      
 
+                    if canPlay then
                         print("-- agora usuario repete --")
                         for i = 1, tamseq do
                             local key = await ("switchpressed")
@@ -81,17 +97,8 @@ function love.load()
                                 print ("errou!")
                                 break
                             end
-                        end
-                    end, 
-                        function() 
-                            local key = await("keypressed")
-                            while key ~= "n" do
-                                key = await("keypressed")
-                            end
-                            print("sequence restart")
-                        end
-                    )
-                    sequence()                    
+                        end  
+                    end
                 end, 
                     function() 
                         local key = await("keypressed")
