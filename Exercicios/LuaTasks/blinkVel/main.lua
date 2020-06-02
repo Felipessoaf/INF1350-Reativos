@@ -75,7 +75,9 @@ function love.load()
                                 stopTask2()
                             end
                         end,
-                            await_ms(500)
+                            function ()
+                                await_ms(500)
+                            end
                         )
                         stopTask1()
                     end
