@@ -27,26 +27,61 @@ function love.load()
     
     local main_task = tasks.task_t:new(
         function()
-            while true do
-                local exec = tasks.par_or(blink, 
-                    function() 
-                        local key = await ("keyreleased")
-                        if key == "h" then
-                            print("speed up")
-                            interval = interval/2
-                            if interval < 100 then
-                                interval = 100
+            local exec = tasks.par_or(function()
+                while true do
+                    local blinkvel = tasks.par_or(blink, 
+                        function() 
+                            local key = await ("keyreleased")
+                            if key == "h" then
+                                print("speed up")
+                                interval = interval/2
+                                if interval < 100 then
+                                    interval = 100
+                                end
+                            elseif key == "l" then
+                                print("speed down")
+                                interval = interval*2
+                                if interval > 2000 then
+                                    interval = 2000
+                                end
                             end
-                        elseif key == "l" then
-                            print("speed down")
-                            interval = interval*2
-                            if interval > 2000 then
-                                interval = 2000
+                        end)
+                    blinkvel()
+                end
+            end,
+                function()
+                    local stop = false
+                    while stop == false do 
+                        local stopTask1 = tasks.par_or(function() 
+                            local keyPressed1 = await("keypressed")
+
+                            if keyPressed1 == "h" or keyPressed1 == "l" then
+                                local stopTask2 = tasks.par_or(function()
+                                    local keyPressed2 = await("keypressed")
+
+                                    if (keyPressed1 == "h" and keyPressed2 == "l") or (keyPressed2 == "h" and keyPressed1 == "l") then
+                                        --apertou as duas em menos de 500ms
+                                        print("stop")
+                                        stop = true
+                                    end
+                                end,
+                                    function()
+                                        local keyReleased = await("keyreleased")
+                                        while keyReleased ~= keyPressed1 do
+                                            keyReleased = await("keyreleased")
+                                        end
+                                    end
+                                )
+                                stopTask2()
                             end
-                        end
-                    end)
-                exec()
-            end
+                        end,
+                            await_ms(500)
+                        )
+                        stopTask1()
+                    end
+                end
+            )
+            exec()
         end
     )
     main_task()
@@ -54,6 +89,11 @@ end
 
 function love.update(dt)
     update_time(dt * 1000)
+end
+
+function love.keypressed(key, scancode)
+    print ("keypressed", key)
+    emit("keypressed", key)
 end
 
 function love.keyreleased(key)
