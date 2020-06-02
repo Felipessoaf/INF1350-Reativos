@@ -61,24 +61,37 @@ function love.load()
     local main_task = tasks.task_t:new(
         function()
             while true do  
-                local exec = tasks.par_or(function() 
+                local game = tasks.par_or(function() 
                     print("novo jogo!")
                     await_ms(500)
-                    for i = 1, tamseq do
-                        seq[i] = love.math.random(1,numswitches)
-                        print(seq[i])
-                        showswitch(seq[i])
-                        await_ms(500)
-                    end
-                    print("-- agora usuario repete --")
-                    for i = 1, tamseq do
-                        local key = await ("switchpressed")
-                        showswitch(key)
-                        if key ~= seq[i] then
-                            print ("errou!")
-                            break
+
+                    local sequence = tasks.par_or(function()
+                        for i = 1, tamseq do
+                            seq[i] = love.math.random(1,numswitches)
+                            print(seq[i])
+                            showswitch(seq[i])
+                            await_ms(500)
                         end
-                    end
+
+                        print("-- agora usuario repete --")
+                        for i = 1, tamseq do
+                            local key = await ("switchpressed")
+                            showswitch(key)
+                            if key ~= seq[i] then
+                                print ("errou!")
+                                break
+                            end
+                        end
+                    end, 
+                        function() 
+                            local key = await("keypressed")
+                            while key ~= "n" do
+                                key = await("keypressed")
+                            end
+                            print("sequence restart")
+                        end
+                    )
+                    sequence()                    
                 end, 
                     function() 
                         local key = await("keypressed")
@@ -89,7 +102,7 @@ function love.load()
                         love.event.quit()
                     end
                 )
-                exec()                
+                game()                
             end
         end
     )
