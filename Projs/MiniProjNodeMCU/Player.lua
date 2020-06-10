@@ -1,3 +1,6 @@
+--Nome: Felipe Pessoa e Guilherme Bizzo
+--Matricula: 1411716 e 1710563
+
 -- Layers module
 local Layers = require 'Layers'
 
@@ -49,10 +52,10 @@ function Player.Init()
         hero.body:setLinearVelocity(hero.speed*direction, currentVelY)
     end
 
-    -- hero.stopHorMove = function ()
-    --     currentVelX, currentVelY = hero.body:getLinearVelocity()
-    --     hero.body:setLinearVelocity(0, currentVelY)
-    -- end
+    hero.stopHorMove = function ()
+        currentVelX, currentVelY = hero.body:getLinearVelocity()
+        hero.body:setLinearVelocity(0, currentVelY)
+    end
     
     hero.jump = function ()
         -- Sets y velocity to 0

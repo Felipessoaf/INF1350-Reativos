@@ -1,3 +1,6 @@
+--Nome: Felipe Pessoa e Guilherme Bizzo
+--Matricula: 1411716 e 1710563
+
 -- Simple Tiled Implementation lib
 local sti = require "sti"
 

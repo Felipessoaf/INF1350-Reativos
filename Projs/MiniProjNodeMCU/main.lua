@@ -1,3 +1,9 @@
+--Nome: Felipe Pessoa e Guilherme Bizzo
+--Matricula: 1411716 e 1710563
+
+-- mqtt library
+local mqtt = require("mqtt_library")
+
 -- MapManager module
 local MapManager = require 'MapManager'
 
@@ -6,6 +12,12 @@ local CollisionManager = require 'CollisionManager'
 
 -- Player module
 local Player = require 'Player'
+  
+local function mqttcb (topic, msg)
+    if topic == "paraloveFG" then
+        --trata msg "1", "2", etc para move esquerda, move direita, pula, etc
+    end
+end
 
 -- Declare initial state of game
 function love.load()
@@ -15,16 +27,24 @@ function love.load()
     hero = Player.Init()
 
     CollisionManager.Init()
+
+    mqtt_client = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
+    mqtt_client:connect("cliente love FG")
+    mqtt_client:subscribe({"paraloveFG"})
 end
 
 function love.update(dt)
-    world:update(dt) -- this puts the world into motion
+    -- Update world
+    world:update(dt) 
 	
 	-- Update world map
     map:update(dt)
     
     -- Updates Player
     hero.update(dt)
+
+    -- mqtt handler
+    mqtt_client:handler()
 end
 
 function love.keyreleased(key)
@@ -35,6 +55,9 @@ end
 function love.keypressed(key)
     -- Sends to Player
     hero.keypressed(key)
+
+    -- Se precisar mandar algo para o node
+    -- mqtt_client:publish("paranodeFG", i)
 end
 
 function love.draw()
