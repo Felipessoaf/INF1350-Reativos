@@ -1,22 +1,41 @@
 --Nome: Felipe Pessoa e Guilherme Bizzo
 --Matricula: 1411716 e 1710563
 
+--leds
 local led1 = 0
 local led2 = 6
+
+--switches
 local sw1 = 3
 local sw2 = 4
+local sw3 = 5
+local sw4 = 8
+
+-- Buzzer
+local buzzer=7
 
 local meuid = "abacateverde"
 local m = mqtt.Client("clientid " .. meuid, 120)
 
+--leds
 gpio.mode(led1, gpio.OUTPUT)
 gpio.mode(led2, gpio.OUTPUT)
 
 gpio.write(led1, gpio.HIGH);
 gpio.write(led2, gpio.HIGH);
 
+--switches
 gpio.mode(sw1,gpio.INT,gpio.PULLUP)
 gpio.mode(sw2,gpio.INT,gpio.PULLUP)
+gpio.mode(sw3,gpio.INT,gpio.PULLUP)
+gpio.mode(sw4,gpio.INT,gpio.PULLUP)
+
+local function beep(freq, duration)
+    pwm.stop(buzzer)
+    pwm.setup(buzzer, freq, 512)
+    pwm.start(buzzer)
+    tmr.create():alarm(duration, tmr.ALARM_SINGLE, function() pwm.stop(buzzer) end)
+end
 
 function criaPublica(c,m)
     return function()
@@ -60,8 +79,10 @@ function conectado (newclient)
     client = newclient
     client:subscribe("paranodeFG", 0, novaInscricao)
 
-    gpio.trig(sw1, "down", criaPublica(client, 1))
+    gpio.trig(sw1, "down", criaPublica(client, "btn1"))
     gpio.trig(sw2, "down", criaPublica(client, 2))
+    gpio.trig(sw3, "down", criaPublica(client, 3))
+    gpio.trig(sw4, "down", criaPublica(client, 4))
 end 
 
 m:connect("broker.hivemq.com", 1883, false, 
