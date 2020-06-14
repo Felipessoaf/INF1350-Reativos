@@ -17,6 +17,7 @@ local function mqttcb (topic, msg)
     if topic == "paraloveFG" then
         --trata msg "1", "2", etc para move esquerda, move direita, pula, etc
         print("topic: "..topic.." msg: "..msg)
+        hero.newMessage(msg)
     end
 end
 
@@ -58,7 +59,7 @@ function love.keypressed(key)
     hero.keypressed(key)
 
     -- Se precisar mandar algo para o node
-    -- mqtt_client:publish("paranodeFG", i)
+    mqtt_client:publish("paranodeFG", key)
 end
 
 function love.draw()

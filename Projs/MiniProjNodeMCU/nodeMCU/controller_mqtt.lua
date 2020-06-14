@@ -45,7 +45,7 @@ end
 
 function publica(c, m)
     c:publish("paraloveFG",m,0,0, 
-            function(client) print("mandou!") end)
+            function(client)  end)
 end
 
 function novaInscricao (c)
@@ -55,22 +55,11 @@ function novaInscricao (c)
 
   local function novamsg (c, t, m)
     print ("mensagem ".. msgsrec .. ", topico: ".. t .. ", dados: " .. m)
-    -- msgsrec = msgsrec + 1
-    -- if m == "1" then
-    --     if aceso1 then
-    --       gpio.write(led1, gpio.LOW);
-    --     else
-    --       gpio.write(led1, gpio.HIGH);
-    --     end
-    --     aceso1 = not aceso1
-    -- elseif m == "2" then
-    --     if aceso2 then
-    --       gpio.write(led2, gpio.LOW);
-    --     else
-    --       gpio.write(led2, gpio.HIGH);
-    --     end
-    --     aceso2 = not aceso2
-    -- end
+    msgsrec = msgsrec + 1
+    
+    if m == "jump" then
+        beep(500, 100)
+    end
   end
   c:on("message", novamsg)
 end
@@ -80,9 +69,9 @@ function conectado (newclient)
     client:subscribe("paranodeFG", 0, novaInscricao)
 
     gpio.trig(sw1, "down", criaPublica(client, "btn1"))
-    gpio.trig(sw2, "down", criaPublica(client, 2))
-    gpio.trig(sw3, "down", criaPublica(client, 3))
-    gpio.trig(sw4, "down", criaPublica(client, 4))
+    gpio.trig(sw2, "down", criaPublica(client, "btn2"))
+    gpio.trig(sw3, "down", criaPublica(client, "btn3"))
+    gpio.trig(sw4, "down", criaPublica(client, "btn4"))
 end 
 
 m:connect("broker.hivemq.com", 1883, false, 

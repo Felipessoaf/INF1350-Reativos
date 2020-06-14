@@ -70,6 +70,14 @@ function Player.Init()
 
         -- Clamp 0..hero.jumpCount
         hero.jumpCount = (hero.jumpCount < 0 and 0 or hero.jumpCount)
+        
+        mqtt_client:publish("paranodeFG", "jump")
+    end
+
+    hero.newMessage = function (msg)
+        if msg == "btn1" and hero.jumpCount > 0 then
+            hero.jump()
+        end
     end
 
     hero.update = function (dt)
@@ -81,17 +89,17 @@ function Player.Init()
         end
     end
 
-    hero.keypressed = function (key)
-        if key == 'w' and hero.jumpCount > 0 then
-            hero.jump()
-        end
-    end
+    -- hero.keypressed = function (key)
+    --     if key == 'w' and hero.jumpCount > 0 then
+    --         hero.jump()
+    --     end
+    -- end
 
-    hero.keyreleased = function (key)
-        if key == 'a' or  key == 'd' then
-            hero.stopHorMove()
-        end
-    end
+    -- hero.keyreleased = function (key)
+    --     if key == 'a' or  key == 'd' then
+    --         hero.stopHorMove()
+    --     end
+    -- end
 
 	-- Draw player
     playerLayer.draw = function(self)
