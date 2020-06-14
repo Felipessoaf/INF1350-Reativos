@@ -12,6 +12,20 @@ local keyMap = {
   d = 1
 }
 
+-- Botoes
+local bt1 = 3
+local bt2 = 4
+local bt3 = 5
+--gpio.mode(bt1,gpio.INT,gpio.PULLUP)
+--gpio.mode(bt2,gpio.INT,gpio.PULLUP)
+-- Colocar no bt1 == LOW no lugar de 'a'
+-- Colocar no bt2 == LOW no lugar de 'd'
+-- Colocar no bt3 == LOW no lugar de 'w'
+
+-- Buzzer
+speakerPin = 4
+--gpio.mode(speakerPin,gpio.OUTPUT)
+
 function Player.Init()
    -- Create new dynamic data layer
     local playerLayer = map:addCustomLayer(Layers.player.name, Layers.player.number)
@@ -84,6 +98,7 @@ function Player.Init()
     hero.keypressed = function (key)
         if key == 'w' and hero.jumpCount > 0 then
             hero.jump()
+            --beep(speakerPin, 200, 500)
         end
     end
 
