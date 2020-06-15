@@ -34,13 +34,16 @@ gpio.mode(sw3,gpio.INT,gpio.PULLUP)
 gpio.mode(sw4,gpio.INT,gpio.PULLUP)
 
 -- timer luminosidade
-
--- local mytimer = tmr.create()
--- mytimer:register(100, tmr.ALARM_AUTO, function()
---     local lum=100-(adc.read(ldr)/10.24)
---     publica(client, lum)
--- end)
--- mytimer:start()
+local mytimer = tmr.create()
+mytimer:register(1000, tmr.ALARM_AUTO, function()
+    local lum = 100 - (adc.read(ldr)/10.24)
+    -- print("ldr")
+    -- print(ldr)
+    -- print("lum")
+    -- print(lum)
+    publica(client, "lum:"..tostring(lum))
+end)
+mytimer:start()
 
 local function beep(freq, duration)
     pwm.stop(buzzer)
@@ -81,14 +84,10 @@ function conectado (newclient)
     client:subscribe("paranodeFG", 0, novaInscricao)
 
     gpio.trig(sw1, "both", function (level)
-        print("level sw1")
-        print(level)
         publica(client, level == 1 and "btn1_up" or "btn1_down")
     end)
 
     gpio.trig(sw2, "both", function (level)
-        print("level sw2")
-        print(level)
         publica(client, level == 1 and "btn2_up" or "btn2_down")
     end)
 

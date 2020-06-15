@@ -70,7 +70,10 @@ function Player.Init()
         mqtt_client:publish("paranodeFG", "jump")
     end
 
-    hero.newMessage = function (msg)
+    hero.newMessage = function (message)
+        local split = splitString(message, ":")
+        local msg = split[1]
+
         if msg == "btn1_down" then
             hero.move(-1)
         elseif msg == "btn2_down" then
@@ -80,37 +83,27 @@ function Player.Init()
         elseif msg == "btn3" and hero.jumpCount > 0 then
             hero.jump()        
         elseif msg == "lum" then
-            -- To do: Pegar o valor de lumValue
-            if lumValue < 100 then
-                hero.color = {1,1,1}
-            elseif lumValue >= 100 then
+            local lumValue = tonumber(split[2])
+            if lumValue < 99 then
                 hero.color = {0,0,0}
+            elseif lumValue >= 99 then
+                hero.color = {1,1,1}
             end
         end
     end
 
     hero.update = function (dt)
-        -- keyboard actions for our hero
-        -- for _, key in pairs({'a', 'd'}) do
-        --     if love.keyboard.isDown(key) then
-        --         hero.move(keyMap[key])
-        --     end
-        -- end
         local currentVelX, currentVelY = hero.body:getLinearVelocity()
         hero.body:setLinearVelocity(hero.speed*hero.direction, currentVelY)
     end
 
-    -- hero.keypressed = function (key)
-    --     if key == 'w' and hero.jumpCount > 0 then
-    --         hero.jump()
-    --     end
-    -- end
+    hero.keypressed = function (key)
 
-    -- hero.keyreleased = function (key)
-    --     if key == 'a' or  key == 'd' then
-    --         hero.stopHorMove()
-    --     end
-    -- end
+    end
+
+    hero.keyreleased = function (key)
+
+    end
 
 	-- Draw player
     playerLayer.draw = function(self)
