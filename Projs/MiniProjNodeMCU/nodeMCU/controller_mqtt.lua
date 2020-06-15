@@ -33,6 +33,15 @@ gpio.mode(sw2,gpio.INT,gpio.PULLUP)
 gpio.mode(sw3,gpio.INT,gpio.PULLUP)
 gpio.mode(sw4,gpio.INT,gpio.PULLUP)
 
+-- timer luminosidade
+
+local mytimer = tmr.create()
+mytimer:register(100, tmr.ALARM_AUTO, function()
+    local lum=100-(adc.read(ldr)/10.24)
+    publica(client, lum)
+end)
+mytimer:start()
+
 local function beep(freq, duration)
     pwm.stop(buzzer)
     pwm.setup(buzzer, freq, 512)

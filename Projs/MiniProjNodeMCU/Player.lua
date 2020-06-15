@@ -36,6 +36,7 @@ function Player.Init()
     hero.height = 30
     hero.speed = 150
     hero.jumpCount = 2
+    hero.color = {117/255, 186/255, 60/255}
     
 	-- Physics
     hero.body = love.physics.newBody(world, hero.initX, hero.initY, "dynamic")
@@ -77,6 +78,13 @@ function Player.Init()
     hero.newMessage = function (msg)
         if msg == "btn1" and hero.jumpCount > 0 then
             hero.jump()
+        elseif msg == "lum" then
+            -- To do: Pegar o valor de lumValue
+            if lumValue < 100 then
+                hero.color = {1,1,1}
+            elseif lumValue >= 100 then
+                hero.color = {0,0,0}
+            end
         end
     end
 
@@ -104,7 +112,7 @@ function Player.Init()
 	-- Draw player
     playerLayer.draw = function(self)
         
-        love.graphics.setColor(117/255, 186/255, 60/255)
+        love.graphics.setColor(unpack(hero.color))
         love.graphics.polygon("fill", hero.body:getWorldPoints(hero.shape:getPoints()))
         love.graphics.setColor(0, 0, 0)
         love.graphics.polygon("line", hero.body:getWorldPoints(hero.shape:getPoints()))
