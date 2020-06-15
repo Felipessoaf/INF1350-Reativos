@@ -14,6 +14,9 @@ local sw4 = 8
 -- Buzzer
 local buzzer=7
 
+-- ADC A0
+local ldr=0 
+
 local meuid = "abacateverde"
 local m = mqtt.Client("clientid " .. meuid, 120)
 
