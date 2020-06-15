@@ -24,8 +24,8 @@ local m = mqtt.Client("clientid " .. meuid, 120)
 gpio.mode(led1, gpio.OUTPUT)
 gpio.mode(led2, gpio.OUTPUT)
 
-gpio.write(led1, gpio.HIGH);
-gpio.write(led2, gpio.HIGH);
+gpio.write(led1, gpio.LOW);
+gpio.write(led2, gpio.LOW);
 
 --switches
 gpio.mode(sw1,gpio.INT,gpio.PULLUP)
@@ -35,12 +35,12 @@ gpio.mode(sw4,gpio.INT,gpio.PULLUP)
 
 -- timer luminosidade
 
-local mytimer = tmr.create()
-mytimer:register(100, tmr.ALARM_AUTO, function()
-    local lum=100-(adc.read(ldr)/10.24)
-    publica(client, lum)
-end)
-mytimer:start()
+-- local mytimer = tmr.create()
+-- mytimer:register(100, tmr.ALARM_AUTO, function()
+--     local lum=100-(adc.read(ldr)/10.24)
+--     publica(client, lum)
+-- end)
+-- mytimer:start()
 
 local function beep(freq, duration)
     pwm.stop(buzzer)
@@ -80,8 +80,18 @@ function conectado (newclient)
     client = newclient
     client:subscribe("paranodeFG", 0, novaInscricao)
 
-    gpio.trig(sw1, "down", criaPublica(client, "btn1"))
-    gpio.trig(sw2, "down", criaPublica(client, "btn2"))
+    gpio.trig(sw1, "both", function (level)
+        print("level sw1")
+        print(level)
+        publica(client, level == 1 and "btn1_up" or "btn1_down")
+    end)
+
+    gpio.trig(sw2, "both", function (level)
+        print("level sw2")
+        print(level)
+        publica(client, level == 1 and "btn2_up" or "btn2_down")
+    end)
+
     gpio.trig(sw3, "down", criaPublica(client, "btn3"))
     gpio.trig(sw4, "down", criaPublica(client, "btn4"))
 end 

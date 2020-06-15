@@ -35,6 +35,7 @@ function Player.Init()
     hero.width = 20
     hero.height = 30
     hero.speed = 150
+    hero.direction = 0
     hero.jumpCount = 2
     hero.color = {117/255, 186/255, 60/255}
     
@@ -49,13 +50,7 @@ function Player.Init()
     
     -- Functions
     hero.move = function (direction)
-        local currentVelX, currentVelY = hero.body:getLinearVelocity()
-        hero.body:setLinearVelocity(hero.speed*direction, currentVelY)
-    end
-
-    hero.stopHorMove = function ()
-        currentVelX, currentVelY = hero.body:getLinearVelocity()
-        hero.body:setLinearVelocity(0, currentVelY)
+        hero.direction = direction
     end
     
     hero.jump = function ()
@@ -76,8 +71,14 @@ function Player.Init()
     end
 
     hero.newMessage = function (msg)
-        if msg == "btn1" and hero.jumpCount > 0 then
-            hero.jump()
+        if msg == "btn1_down" then
+            hero.move(-1)
+        elseif msg == "btn2_down" then
+            hero.move(1)
+        elseif msg == "btn1_up" or msg == "btn2_up" then
+            hero.move(0)
+        elseif msg == "btn3" and hero.jumpCount > 0 then
+            hero.jump()        
         elseif msg == "lum" then
             -- To do: Pegar o valor de lumValue
             if lumValue < 100 then
@@ -90,11 +91,13 @@ function Player.Init()
 
     hero.update = function (dt)
         -- keyboard actions for our hero
-        for _, key in pairs({'a', 'd'}) do
-            if love.keyboard.isDown(key) then
-                hero.move(keyMap[key])
-            end
-        end
+        -- for _, key in pairs({'a', 'd'}) do
+        --     if love.keyboard.isDown(key) then
+        --         hero.move(keyMap[key])
+        --     end
+        -- end
+        local currentVelX, currentVelY = hero.body:getLinearVelocity()
+        hero.body:setLinearVelocity(hero.speed*hero.direction, currentVelY)
     end
 
     -- hero.keypressed = function (key)
