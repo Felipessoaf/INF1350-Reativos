@@ -37,10 +37,6 @@ gpio.mode(sw4,gpio.INT,gpio.PULLUP)
 local mytimer = tmr.create()
 mytimer:register(1000, tmr.ALARM_AUTO, function()
     local lum = 100 - (adc.read(ldr)/10.24)
-    -- print("ldr")
-    -- print(ldr)
-    -- print("lum")
-    -- print(lum)
     publica(client, "lum:"..tostring(lum))
 end)
 mytimer:start()
@@ -59,6 +55,11 @@ function criaPublica(c,m)
 end
 
 function publica(c, m)
+    if (c == nil) then
+        -- print("client nil")
+        return 
+    end
+
     c:publish("paraloveFG",m,0,0, 
             function(client)  end)
 end
@@ -80,9 +81,15 @@ function novaInscricao (c)
 end
 
 function conectado (newclient)
+    print("conectado")
+    if (newclient == nil) then
+        print("client nil conectado")
+        return 
+    end
     client = newclient
     client:subscribe("paranodeFG", 0, novaInscricao)
 
+    --callback botoes
     gpio.trig(sw1, "both", function (level)
         publica(client, level == 1 and "btn1_up" or "btn1_down")
     end)
@@ -95,6 +102,11 @@ function conectado (newclient)
     gpio.trig(sw4, "down", criaPublica(client, "btn4"))
 end 
 
+--192.168.1.106
+--
 m:connect("broker.hivemq.com", 1883, false, 
+-- m:connect("192.168.1.105", 1883, false, 
              conectado,
              function(client, reason) print("failed reason: "..reason) end)
+
+             

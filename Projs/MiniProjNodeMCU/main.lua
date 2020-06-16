@@ -15,7 +15,6 @@ local Player = require 'Player'
   
 local function mqttcb (topic, msg)
     if topic == "paraloveFG" then
-        --trata msg "1", "2", etc para move esquerda, move direita, pula, etc
         print("topic: "..topic.." msg: "..msg)
         hero.newMessage(msg)
     end
@@ -31,6 +30,7 @@ function love.load()
     CollisionManager.Init()
 
     mqtt_client = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
+    -- mqtt_client = mqtt.client.create("localhost", 1883, mqttcb)
     mqtt_client:connect("cliente love FG")
     mqtt_client:subscribe({"paraloveFG"})
 end

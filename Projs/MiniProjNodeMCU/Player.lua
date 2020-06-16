@@ -84,9 +84,9 @@ function Player.Init()
             hero.jump()        
         elseif msg == "lum" then
             local lumValue = tonumber(split[2])
-            if lumValue < 99 then
+            if lumValue < 10 then
                 hero.color = {0,0,0}
-            elseif lumValue >= 99 then
+            elseif lumValue >= 10 then
                 hero.color = {1,1,1}
             end
         end
