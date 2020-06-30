@@ -12,6 +12,9 @@ local CollisionManager = require 'CollisionManager'
 
 -- Player module
 local Player = require 'Player'
+
+-- Shot module
+local Shot = require 'Shot'
   
 local function mqttcb (topic, msg)
     if topic == "paraloveFG" then
@@ -27,8 +30,11 @@ function love.load()
 	map, world = MapManager.InitMap()
 
     hero = Player.Init()
+    
+    Shot.Init()
 
     CollisionManager.Init()
+    
 
     mqtt_client = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
     mqtt_client:connect("cliente love FG")
@@ -44,6 +50,9 @@ function love.update(dt)
     
     -- Updates Player
     hero.update(dt)
+    
+    -- Updates Shot
+    Shot.update(dt)
 
     -- mqtt handler
     mqtt_client:handler()

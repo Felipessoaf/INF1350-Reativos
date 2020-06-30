@@ -6,6 +6,10 @@ local Layers = {
         name = "Player",
         number = 3
     },
+    shot = {
+      name = "Shot",
+      number = 4
+    },
 }
 
 return Layers

@@ -14,6 +14,18 @@ function beginContact(a, b, coll)
         b:getUserData().properties.Ground == true and a:getUserData().properties.tag == "Hero") then
         hero.jumpCount = 2
     end
+    
+    -- Trata colisão do tiro
+    if (a:getUserData().properties.Ground == true and b:getUserData().properties.tag == "Shot" or
+        b:getUserData().properties.Ground == true and a:getUserData().properties.tag == "Shot") then
+        local shot
+        if a:getUserData().properties.tag == "Shot" then
+          shot = a:getUserData().properties
+        elseif b:getUserData().properties.tag == "Shot" then
+          shot = b:getUserData().properties
+        end
+        shot.remove()        
+    end
 
 end
 

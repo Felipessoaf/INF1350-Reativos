@@ -4,6 +4,8 @@
 -- Layers module
 local Layers = require 'Layers'
 
+local Shot = require 'Shot'
+
 local Player = {}
 
 -- Maps keys to players and directions
@@ -38,6 +40,7 @@ function Player.Init()
     hero.direction = 0
     hero.jumpCount = 2
     hero.color = {117/255, 186/255, 60/255}
+    hero.shotDirection = 1
     
 	-- Physics
     hero.body = love.physics.newBody(world, hero.initX, hero.initY, "dynamic")
@@ -51,6 +54,9 @@ function Player.Init()
     -- Functions
     hero.move = function (direction)
         hero.direction = direction
+        if direction ~= 0 then
+          hero.shotDirection = direction
+        end
     end
     
     hero.jump = function ()
@@ -98,11 +104,21 @@ function Player.Init()
     end
 
     hero.keypressed = function (key)
-
+         if key == 'a' or key == 'd' then
+           hero.move(keyMap[key])
+        end
+        if key == 'w' and hero.jumpCount > 0 then
+          hero.jump()
+        end
+        if key == 'space' then
+          Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection)
+        end
     end
 
     hero.keyreleased = function (key)
-
+        if key == 'a' or key == 'd' then
+           hero.move(0)
+        end
     end
 
 	-- Draw player
