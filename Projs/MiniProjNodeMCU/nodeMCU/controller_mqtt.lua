@@ -102,8 +102,6 @@ function conectado (newclient)
     gpio.trig(sw4, "down", criaPublica(client, "btn4"))
 end 
 
---192.168.1.106
---
 m:connect("broker.hivemq.com", 1883, false, 
 -- m:connect("192.168.1.105", 1883, false, 
              conectado,
