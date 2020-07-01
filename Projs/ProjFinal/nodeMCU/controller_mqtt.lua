@@ -81,6 +81,8 @@ function novaInscricao (c)
 end
 
 function conectado (newclient)
+    print("conectado")
+    
     client = newclient
     client:subscribe("paranodeFG", 0, novaInscricao)
 
