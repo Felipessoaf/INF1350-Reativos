@@ -23,22 +23,41 @@ local function mqttcb (topic, msg)
     end
 end
 
+local onlineIds = {
+    "1" = {
+        sub = "paraloveFG Online 1",
+        send = "paraloveFG Online 2"
+    },
+    "2" = {
+        sub = "paraloveFG Online 2",
+        send = "paraloveFG Online 1"
+    },
+}
+
+local onlineId = 1
+
 -- Declare initial state of game
 function love.load()
 	-- load map
 	map, world = MapManager.InitMap()
 
     hero = Player.Init()
+    player2 = Player.Init()
     
     Shot.Init()
 
     CollisionManager.Init()
     
+    --MQTT for controller
+    -- mqtt_client_controller = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
+    mqtt_client_controller = mqtt.client.create("localhost", 1883, mqttcb)
+    mqtt_client_controller:connect("cliente love FG")
+    mqtt_client_controller:subscribe({"paraloveFG"})
 
-    mqtt_client = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
-    -- mqtt_client = mqtt.client.create("localhost", 1883, mqttcb)
-    mqtt_client:connect("cliente love FG")
-    mqtt_client:subscribe({"paraloveFG"})
+    --MQTT for online
+    mqtt_client_online = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
+    mqtt_client_online:connect("cliente love FG online")
+    mqtt_client_online:subscribe({onlineIds.onlineId.sub})
 end
 
 function love.update(dt)
@@ -50,12 +69,14 @@ function love.update(dt)
     
     -- Updates Player
     hero.update(dt)
+    player2.update(dt)
     
     -- Updates Shot
     Shot.update(dt)
 
     -- mqtt handler
-    mqtt_client:handler()
+    mqtt_client_controller:handler()
+    mqtt_client_online:handler()
 end
 
 function love.keyreleased(key)
@@ -67,8 +88,8 @@ function love.keypressed(key)
     -- Sends to Player
     hero.keypressed(key)
 
-    -- Se precisar mandar algo para o node
-    mqtt_client:publish("paranodeFG", key)
+    -- Manda keypressed para o node
+    mqtt_client_online:publish(onlineIds.onlineId.send, key)
 end
 
 function love.draw()
