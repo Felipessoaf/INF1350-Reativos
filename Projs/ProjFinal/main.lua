@@ -15,6 +15,9 @@ local Player = require 'Player'
 
 -- Shot module
 local Shot = require 'Shot'
+
+-- Coin module
+local Coin = require 'Coin'
   
 local function mqttcb (topic, msg)
     if topic == "paraloveFG" then
@@ -45,6 +48,8 @@ function love.load()
     player2 = Player.Init()
     
     Shot.Init()
+    
+    Coin.Init()
 
     CollisionManager.Init()
     
@@ -73,6 +78,9 @@ function love.update(dt)
     
     -- Updates Shot
     Shot.update(dt)
+    
+    -- Updates Coin
+    Coin.update(dt)
 
     -- mqtt handler
     mqtt_client_controller:handler()

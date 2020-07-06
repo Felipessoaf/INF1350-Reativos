@@ -10,6 +10,10 @@ local Layers = {
       name = "Shot",
       number = 4
     },
+    coin = {
+      name = "Coin",
+      number = 5
+    },
 }
 
 return Layers
