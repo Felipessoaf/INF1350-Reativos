@@ -12,7 +12,13 @@ function beginContact(a, b, coll)
     -- Trata reset do grounded para pulo
     if (a:getUserData().properties.Ground == true and b:getUserData().properties.tag == "Hero" or
         b:getUserData().properties.Ground == true and a:getUserData().properties.tag == "Hero") then
-        hero.jumpCount = 2
+        local player
+        if a:getUserData().properties.tag == "Hero" then
+            player = a:getUserData().properties
+        elseif b:getUserData().properties.tag == "Hero" then
+            player = b:getUserData().properties
+        end
+        player.jumpCount = 2
     end
     
     -- Trata colisão do tiro

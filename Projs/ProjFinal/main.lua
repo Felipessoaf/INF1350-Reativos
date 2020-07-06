@@ -18,26 +18,38 @@ local Shot = require 'Shot'
 
 -- Coin module
 local Coin = require 'Coin'
+
+local onlineIds = {}
+onlineIds[1] = {
+        name = "cliente love FG online 1",
+        sub = "paraloveFG Online 1",
+        send = "paraloveFG Online 2"
+    }
+onlineIds[2] = {
+        name = "cliente love FG online 2",
+        sub = "paraloveFG Online 2",
+        send = "paraloveFG Online 1"
+    }
+
+local clientName = {}
+clientName[1] = "cliente love FG 1"
+clientName[2] = "cliente love FG 2"
+
+local onlineId = 2
   
 local function mqttcb (topic, msg)
     if topic == "paraloveFG" then
         print("topic: "..topic.." msg: "..msg)
         hero.newMessage(msg)
+    elseif topic == onlineIds[onlineId].sub then
+        local split = splitString(msg, ":")
+        if split[1] == "keyreleased" then
+            player2.keyreleased(split[2])
+        elseif split[1] == "keypressed" then
+            player2.keypressed(split[2])
+        end
     end
 end
-
-local onlineIds = {
-    "1" = {
-        sub = "paraloveFG Online 1",
-        send = "paraloveFG Online 2"
-    },
-    "2" = {
-        sub = "paraloveFG Online 2",
-        send = "paraloveFG Online 1"
-    },
-}
-
-local onlineId = 1
 
 -- Declare initial state of game
 function love.load()
@@ -55,14 +67,14 @@ function love.load()
     
     --MQTT for controller
     -- mqtt_client_controller = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
-    mqtt_client_controller = mqtt.client.create("localhost", 1883, mqttcb)
-    mqtt_client_controller:connect("cliente love FG")
-    mqtt_client_controller:subscribe({"paraloveFG"})
+    -- mqtt_client_controller = mqtt.client.create("localhost", 1883, mqttcb)
+    -- mqtt_client_controller:connect(clientName[onlineId])
+    -- mqtt_client_controller:subscribe({"paraloveFG"})
 
     --MQTT for online
     mqtt_client_online = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
-    mqtt_client_online:connect("cliente love FG online")
-    mqtt_client_online:subscribe({onlineIds.onlineId.sub})
+    mqtt_client_online:connect(onlineIds[onlineId].name)
+    mqtt_client_online:subscribe({onlineIds[onlineId].sub})
 end
 
 function love.update(dt)
@@ -83,13 +95,16 @@ function love.update(dt)
     Coin.update(dt)
 
     -- mqtt handler
-    mqtt_client_controller:handler()
+    -- mqtt_client_controller:handler()
     mqtt_client_online:handler()
 end
 
 function love.keyreleased(key)
     -- Sends to Player
     hero.keyreleased(key)
+
+    -- Manda keyreleased para o node
+    mqtt_client_online:publish(onlineIds[onlineId].send, "keyreleased:"..key)
 end
 
 function love.keypressed(key)
@@ -97,7 +112,7 @@ function love.keypressed(key)
     hero.keypressed(key)
 
     -- Manda keypressed para o node
-    mqtt_client_online:publish(onlineIds.onlineId.send, key)
+    mqtt_client_online:publish(onlineIds[onlineId].send, "keypressed:"..key)
 end
 
 function love.draw()

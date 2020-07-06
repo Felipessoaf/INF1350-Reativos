@@ -136,7 +136,7 @@ function Player.Init()
     end
     
 	-- Remove unneeded object layer
-	map:removeLayer("spawn")
+	-- map:removeLayer("spawn")
 
     return hero
 end
