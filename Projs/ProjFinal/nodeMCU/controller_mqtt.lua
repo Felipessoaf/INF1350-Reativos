@@ -77,9 +77,23 @@ function novaInscricao (c)
     print ("mensagem ".. msgsrec .. ", topico: ".. t .. ", dados: " .. m)
     msgsrec = msgsrec + 1
     
+    -- Beeps
     if m == "jump" then
         beep(500, 100)
     end
+    
+    --if m == "shot" then
+        --beep(500,50)
+    --end
+    
+    --if player colidir com coin then
+        --beep(500, 300)
+    --end
+    
+    --if player colidir com tiro do inimigo
+        --beep(500, 50)
+    --end
+    
   end
   c:on("message", novamsg)
 end

@@ -19,6 +19,9 @@ local Shot = require 'Shot'
 -- Coin module
 local Coin = require 'Coin'
 
+-- Enemy module
+local Enemy = require 'Enemy'
+
 local onlineIds = {}
 onlineIds[1] = {
         name = "cliente love FG online 1",
@@ -62,6 +65,8 @@ function love.load()
     Shot.Init()
     
     Coin.Init()
+    
+    Enemy.Init()
 
     CollisionManager.Init()
     
@@ -93,6 +98,9 @@ function love.update(dt)
     
     -- Updates Coin
     Coin.update(dt)
+    
+    -- Updates Enemy
+    Enemy.update(dt)
 
     -- mqtt handler
     -- mqtt_client_controller:handler()
