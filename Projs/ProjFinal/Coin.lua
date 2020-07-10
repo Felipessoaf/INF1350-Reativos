@@ -11,22 +11,24 @@ function Coin.Init()
     local coinLayer = map:addCustomLayer(Layers.coin.name, Layers.coin.number)
     print("Coin Init")
     
+    Coin.moedas = {}
+    
     for k, object in pairs(map.objects) do
+        print(object.name)
         if object.name == "coinSpawn" then
-          Coin.Create(object.x, object.y)          
+            Coin.Create(object.x, object.y)          
         end
     end
-    
-    Coin.moedas = {}
 
 	-- Draw player
     coinLayer.draw = function(self)
         
         for coin, _ in pairs(Coin.moedas) do
+            local cx, cy = coin.body:getWorldPoints(coin.shape:getPoint())
             love.graphics.setColor(unpack(coin.color))
-            love.graphics.polygon("fill", coin.body:getWorldPoints(coin.shape:getPoints()))
-            love.graphics.setColor(0, 0, 1)
-            love.graphics.polygon("line", coin.body:getWorldPoints(coin.shape:getPoints()))
+            love.graphics.circle("fill", cx, cy, coin.shape:getRadius())
+            love.graphics.setColor(0, 0, 0)
+            love.graphics.circle("line", cx, cy, coin.shape:getRadius())
         end
           
 		-- Temporarily draw a point at our location so we know
@@ -46,7 +48,7 @@ function Coin.Create(x,y)
     coin.initX = x
     coin.initY = y
     coin.radius = 5
-    coin.color = color
+    coin.color = {1,1,0}
     
 	-- Physics
     coin.body = love.physics.newBody(world, coin.initX, coin.initY, "dynamic")
