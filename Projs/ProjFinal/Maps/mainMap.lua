@@ -1,15 +1,15 @@
 return {
   version = "1.2",
   luaversion = "5.1",
-  tiledversion = "1.3.2",
+  tiledversion = "1.3.5",
   orientation = "orthogonal",
   renderorder = "left-up",
   width = 150,
   height = 70,
   tilewidth = 32,
   tileheight = 32,
-  nextlayerid = 8,
-  nextobjectid = 18,
+  nextlayerid = 9,
+  nextobjectid = 22,
   properties = {},
   tilesets = {
     {
@@ -608,45 +608,6 @@ return {
     },
     {
       type = "objectgroup",
-      id = 7,
-      name = "coins",
-      visible = true,
-      opacity = 1,
-      offsetx = 0,
-      offsety = 0,
-      draworder = "topdown",
-      properties = {},
-      objects = {
-        {
-          id = 16,
-          name = "coinSpawn",
-          type = "",
-          shape = "rectangle",
-          x = 1548,
-          y = 1325.33,
-          width = 0,
-          height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 17,
-          name = "coinSpawn",
-          type = "",
-          shape = "rectangle",
-          x = 1647.33,
-          y = 1323.67,
-          width = 0,
-          height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        }
-      }
-    },
-    {
-      type = "objectgroup",
       id = 3,
       name = "spawn",
       visible = true,
@@ -663,6 +624,32 @@ return {
           shape = "rectangle",
           x = 1358.67,
           y = 1313.33,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 20,
+          name = "coinSpawn",
+          type = "",
+          shape = "rectangle",
+          x = 1496,
+          y = 1318.67,
+          width = 0,
+          height = 1.33333,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 21,
+          name = "enemySpawn",
+          type = "",
+          shape = "rectangle",
+          x = 1568,
+          y = 1322.67,
           width = 0,
           height = 0,
           rotation = 0,
