@@ -4,7 +4,7 @@
 -- Layers module
 local Layers = require 'Layers'
 
---local Shot = require 'Shot'
+local Shot = require 'Shot'
 
 local Enemy = {}
 
@@ -71,7 +71,7 @@ function Enemy.Create(x,y)
     enemy.update = function(dt)
         local currentTime = love.timer:getTime()
         if currentTime > enemy.shotTime + enemy.nextShotInterval then
-          --Shot.Create(enemy.body:getX(), enemy.body:getY(), {1,0,1}, hero.body:getX() < enemy.body:getX() and -1 or 1)
+          Shot.Create(enemy.body:getX(), enemy.body:getY(), {1,0,1}, hero.body:getX() < enemy.body:getX() and -1 or 1, "EnemyShot")
           enemy.shotTime = currentTime
           enemy.nextShotInterval = math.random()
         end

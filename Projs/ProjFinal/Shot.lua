@@ -35,11 +35,11 @@ function Shot.update(dt)
   end
 end
 
-function Shot.Create(x, y, color, direction)
-	local shot = {}
+function Shot.Create(x, y, color, direction, tag)
+    local shot = {}
 
 	-- Properties
-    shot.tag = "Shot"
+    shot.tag = tag
     shot.initX = x
     shot.initY = y
     shot.width = 5
@@ -68,11 +68,9 @@ function Shot.Create(x, y, color, direction)
     
     shot.remove = function()
       Shot.shots[shot] = nil
-    end
+    end    
     
-    
-    Shot.shots[shot] = true
-    
+    Shot.shots[shot] = true    
   end
   
   return Shot

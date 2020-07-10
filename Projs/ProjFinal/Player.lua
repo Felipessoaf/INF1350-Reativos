@@ -112,8 +112,7 @@ function Player.Init()
           hero.jump()
         end
         if key == 'space' then
-          Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection)
-          print("Atirou")
+          Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection, "PlayerShot")
         end
     end
 

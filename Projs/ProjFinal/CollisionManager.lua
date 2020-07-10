@@ -21,15 +21,38 @@ function beginContact(a, b, coll)
         player.jumpCount = 2
     end
     
-    -- Trata colisão do tiro
-    if (a:getUserData().properties.tag == "Shot" or b:getUserData().properties.tag == "Shot") then
+    -- Trata colisão do tiro do player
+    if (a:getUserData().properties.tag == "PlayerShot" or b:getUserData().properties.tag == "PlayerShot") then
         local shot
-        if a:getUserData().properties.tag == "Shot" then
+        local other
+        if a:getUserData().properties.tag == "PlayerShot" then
           shot = a:getUserData().properties
-        elseif b:getUserData().properties.tag == "Shot" then
+          other = b:getUserData().properties
+        elseif b:getUserData().properties.tag == "PlayerShot" then
           shot = b:getUserData().properties
+          other = a:getUserData().properties
         end
-        shot.remove()        
+
+        if other.tag ~= "Hero" then
+            shot.remove()        
+        end
+    end
+    
+    -- Trata colisão do tiro do inimigo
+    if (a:getUserData().properties.tag == "EnemyShot" or b:getUserData().properties.tag == "EnemyShot") then
+        local shot
+        local other
+        if a:getUserData().properties.tag == "EnemyShot" then
+          shot = a:getUserData().properties
+          other = b:getUserData().properties
+        elseif b:getUserData().properties.tag == "EnemyShot" then
+          shot = b:getUserData().properties
+          other = a:getUserData().properties
+        end
+
+        if other.tag ~= "Enemy" then
+            shot.remove()        
+        end
     end
     
     -- Trata colisão do player com moedas
