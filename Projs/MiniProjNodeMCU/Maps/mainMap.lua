@@ -1,15 +1,15 @@
 return {
   version = "1.2",
   luaversion = "5.1",
-  tiledversion = "1.3.2",
+  tiledversion = "1.3.5",
   orientation = "orthogonal",
   renderorder = "left-up",
   width = 150,
   height = 70,
   tilewidth = 32,
   tileheight = 32,
-  nextlayerid = 6,
-  nextobjectid = 4,
+  nextlayerid = 7,
+  nextobjectid = 16,
   properties = {},
   tilesets = {
     {
@@ -624,6 +624,58 @@ return {
           shape = "rectangle",
           x = 1358.67,
           y = 1313.33,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      id = 6,
+      name = "coin",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      draworder = "topdown",
+      properties = {},
+      objects = {
+        {
+          id = 13,
+          name = "coinSpawn",
+          type = "",
+          shape = "rectangle",
+          x = 1810.67,
+          y = 1321.33,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 14,
+          name = "coinSpawn",
+          type = "",
+          shape = "rectangle",
+          x = 1530.67,
+          y = 1318.67,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 15,
+          name = "coinSpawn",
+          type = "",
+          shape = "rectangle",
+          x = 1646.67,
+          y = 1321.33,
           width = 0,
           height = 0,
           rotation = 0,

@@ -96,9 +96,6 @@ function love.update(dt)
     -- Updates Shot
     Shot.update(dt)
     
-    -- Updates Coin
-    Coin.update(dt)
-    
     -- Updates Enemy
     Enemy.update(dt)
 

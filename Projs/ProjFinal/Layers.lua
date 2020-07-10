@@ -14,6 +14,10 @@ local Layers = {
       name = "Coin",
       number = 5
     },
+    enemy = {
+      name = "Enemy",
+      number = 6
+    },
 }
 
 return Layers

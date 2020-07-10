@@ -73,7 +73,7 @@ function Player.Init()
         -- Clamp 0..hero.jumpCount
         hero.jumpCount = (hero.jumpCount < 0 and 0 or hero.jumpCount)
         
-        mqtt_client_online:publish("paranodeFG", "jump")
+        --mqtt_client_controller:publish("paranodeFG", "jump")
     end
 
     hero.newMessage = function (message)

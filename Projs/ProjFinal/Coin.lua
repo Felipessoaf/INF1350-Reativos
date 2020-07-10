@@ -8,15 +8,14 @@ local Coin = {}
 
 function Coin.Init()
    -- Create new dynamic data layer
-    local coinLayer = map:addCustomLayer(Layers.coin.name, Layers.coin.number)	
+    local coinLayer = map:addCustomLayer(Layers.coin.name, Layers.coin.number)
+    print("Coin Init")
     
-    --local spawn
-    --for k, object in pairs(map.objects) do
-        --if object.name == "spawnPoint" then
-          --spawn = object
-          --break
-        --end
-    --end
+    for k, object in pairs(map.objects) do
+        if object.name == "coinSpawn" then
+          Coin.Create(object.x, object.y)          
+        end
+    end
     
     Coin.moedas = {}
 
@@ -38,41 +37,30 @@ function Coin.Init()
     
 end
 
-function Coin.update(dt)
-  for coin, _ in pairs(Coin.moedas) do
-    coin.update(dt)
-  end
-end
-
-function Coin.Create()
+function Coin.Create(x,y)
 	local coin = {}
+  print("Coin Create")
 
 	-- Properties
     coin.tag = "Coin"
-    coin.initX = 120
-    coin.initY = 120
-    coin.width = 10
-    coin.height = 10
+    coin.initX = x
+    coin.initY = y
+    coin.radius = 5
     coin.color = color
     
 	-- Physics
     coin.body = love.physics.newBody(world, coin.initX, coin.initY, "dynamic")
     coin.body:setFixedRotation(true)
     coin.body:setGravityScale(0)
-    coin.body:setBullet(true)
     
-    coin.shape = love.physics.newRectangleShape(coin.width, coin.height)
+    coin.shape = love.physics.newCircleShape(coin.radius)
     
     coin.fixture = love.physics.newFixture(coin.body, coin.shape, 2)
     coin.fixture:setUserData({properties = coin})
     coin.fixture:setCategory(2)
     coin.fixture:setSensor(true)
     
-    -- Functions
-    coin.update = function(dt)
-      coin.body:setLinearVelocity(coin.speed*coin.direction, 0)
-    end
-    
+    -- Functions    
     coin.remove = function()
       Coin.moedas[coin] = nil
     end

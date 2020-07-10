@@ -31,7 +31,7 @@ function Enemy.Init()
 end
 
 function Enemy.update(dt)
-  for enemy, _ in pairs(Enemy.moedas) do
+  for enemy, _ in pairs(Enemy.en) do
     enemy.update(dt)
   end
 end
