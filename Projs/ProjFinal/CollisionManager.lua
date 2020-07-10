@@ -33,9 +33,12 @@ function beginContact(a, b, coll)
           other = a:getUserData().properties
         end
 
-        if other.tag ~= "Hero" then
+        if other.tag ~= "Hero" and other.tag ~= "Coin" then
             shot.remove()        
         end
+        if other.tag == "Enemy" then
+            other.remove()
+        end          
     end
     
     -- Trata colisão do tiro do inimigo
@@ -50,8 +53,11 @@ function beginContact(a, b, coll)
           other = a:getUserData().properties
         end
 
-        if other.tag ~= "Enemy" then
+        if other.tag ~= "Enemy" and other.tag ~= "Coin" then
             shot.remove()        
+        end
+        if other.tag == "Hero" then
+          hero.damage(10)
         end
     end
     

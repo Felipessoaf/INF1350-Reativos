@@ -137,6 +137,12 @@ function love.draw()
     love.graphics.setColor(1, 1, 1)
     font = love.graphics.setNewFont(20)
     love.graphics.print(text, love.graphics.getWidth()/2 - font:getWidth(text)/2, 20)
+    
+    love.graphics.setColor(255,0,0,255)
+    love.graphics.rectangle("fill", 20, 20, hero.health, 20)
+    love.graphics.setColor(0,0,0,255)
+    love.graphics.rectangle("line", 20, 20, 100, 20)
+    
 end
 
 function splitString(inputstr, sep)

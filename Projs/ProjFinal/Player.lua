@@ -42,6 +42,7 @@ function Player.Init()
     hero.color = {117/255, 186/255, 60/255}
     hero.shotDirection = 1
     hero.coins = 0
+    hero.health = 100
     
 	-- Physics
     hero.body = love.physics.newBody(world, hero.initX, hero.initY, "dynamic")
@@ -75,6 +76,13 @@ function Player.Init()
         hero.jumpCount = (hero.jumpCount < 0 and 0 or hero.jumpCount)
         
         --mqtt_client_controller:publish("paranodeFG", "jump")
+    end
+    
+    hero.damage = function(dmg)
+      hero.health = hero.health - dmg
+      if hero.health <= 0 then
+        love.load()
+      end
     end
 
     hero.newMessage = function (message)
