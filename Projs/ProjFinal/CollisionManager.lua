@@ -75,6 +75,7 @@ function beginContact(a, b, coll)
         end
         player.coins = player.coins + 1
         coin.remove()
+        mqtt_client_controller:publish("paranodeFG", "coin")
     end
 
 end

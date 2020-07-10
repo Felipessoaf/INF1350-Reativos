@@ -75,7 +75,7 @@ function Player.Init()
         -- Clamp 0..hero.jumpCount
         hero.jumpCount = (hero.jumpCount < 0 and 0 or hero.jumpCount)
         
-        --mqtt_client_controller:publish("paranodeFG", "jump")
+        mqtt_client_controller:publish("paranodeFG", "jump")
     end
     
     hero.damage = function(dmg)
@@ -84,7 +84,8 @@ function Player.Init()
         love.load()
       end
     end
-
+    
+    
     hero.newMessage = function (message)
         local split = splitString(message, ":")
         local msg = split[1]
@@ -96,7 +97,10 @@ function Player.Init()
         elseif msg == "btn1_up" or msg == "btn2_up" then
             hero.move(0)
         elseif msg == "btn3" and hero.jumpCount > 0 then
-            hero.jump()        
+            hero.jump()
+        elseif msg == "btn4" then
+          Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection, "PlayerShot")
+          mqtt_client_controller:publish("paranodeFG", "jump")
         elseif msg == "lum" then
             local lumValue = tonumber(split[2])
             if lumValue < 50 then

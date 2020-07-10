@@ -82,17 +82,17 @@ function novaInscricao (c)
         beep(500, 100)
     end
     
-    --if m == "shot" then
-        --beep(500,50)
-    --end
+    if m == "shot" then
+        beep(500,50)
+    end
     
-    --if player colidir com coin then
-        --beep(500, 300)
-    --end
+    if m == "coin" then
+        beep(500, 300)
+    end
     
-    --if player colidir com tiro do inimigo
-        --beep(500, 50)
-    --end
+    if m == "enemyShot" then
+        beep(500, 50)
+    end
     
   end
   c:on("message", novamsg)

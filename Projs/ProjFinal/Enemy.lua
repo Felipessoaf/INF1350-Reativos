@@ -74,6 +74,7 @@ function Enemy.Create(x,y)
           Shot.Create(enemy.body:getX(), enemy.body:getY(), {1,0,1}, hero.body:getX() < enemy.body:getX() and -1 or 1, "EnemyShot")
           enemy.shotTime = currentTime
           enemy.nextShotInterval = math.random()*2
+          mqtt_client_controller:publish("paranodeFG", "enemyShot")
         end
     end
     

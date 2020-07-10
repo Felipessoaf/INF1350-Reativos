@@ -71,10 +71,10 @@ function love.load()
     CollisionManager.Init()
     
     --MQTT for controller
-    -- mqtt_client_controller = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
-    -- mqtt_client_controller = mqtt.client.create("localhost", 1883, mqttcb)
-    -- mqtt_client_controller:connect(clientName[onlineId])
-    -- mqtt_client_controller:subscribe({"paraloveFG"})
+     mqtt_client_controller = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
+     mqtt_client_controller = mqtt.client.create("localhost", 1883, mqttcb)
+     mqtt_client_controller:connect(clientName[onlineId])
+     mqtt_client_controller:subscribe({"paraloveFG"})
 
     --MQTT for online
     mqtt_client_online = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
