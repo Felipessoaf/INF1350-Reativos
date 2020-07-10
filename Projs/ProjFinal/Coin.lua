@@ -9,12 +9,10 @@ local Coin = {}
 function Coin.Init()
    -- Create new dynamic data layer
     local coinLayer = map:addCustomLayer(Layers.coin.name, Layers.coin.number)
-    print("Coin Init")
     
     Coin.moedas = {}
     
     for k, object in pairs(map.objects) do
-        print(object.name)
         if object.name == "coinSpawn" then
             Coin.Create(object.x, object.y)          
         end
@@ -41,13 +39,12 @@ end
 
 function Coin.Create(x,y)
 	local coin = {}
-  print("Coin Create")
 
 	-- Properties
     coin.tag = "Coin"
     coin.initX = x
     coin.initY = y
-    coin.radius = 5
+    coin.radius = 7
     coin.color = {1,1,0}
     
 	-- Physics
@@ -65,6 +62,7 @@ function Coin.Create(x,y)
     -- Functions    
     coin.remove = function()
       Coin.moedas[coin] = nil
+      --coin.body:setActive(false)
     end
     
     

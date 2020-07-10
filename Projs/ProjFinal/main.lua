@@ -131,6 +131,12 @@ function love.draw()
 	-- Draw Collision Map (useful for debugging)
 	love.graphics.setColor(1, 0, 0)
 	map:box2d_draw(tx,ty)
+  
+  -- Texto player
+    local text = "Moedas: "..tostring(hero.coins)
+    love.graphics.setColor(1, 1, 1)
+    font = love.graphics.setNewFont(20)
+    love.graphics.print(text, love.graphics.getWidth()/2 - font:getWidth(text)/2, 20)
 end
 
 function splitString(inputstr, sep)

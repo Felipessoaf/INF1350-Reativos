@@ -41,6 +41,7 @@ function Player.Init()
     hero.jumpCount = 2
     hero.color = {117/255, 186/255, 60/255}
     hero.shotDirection = 1
+    hero.coins = 0
     
 	-- Physics
     hero.body = love.physics.newBody(world, hero.initX, hero.initY, "dynamic")
@@ -128,6 +129,7 @@ function Player.Init()
         love.graphics.polygon("fill", hero.body:getWorldPoints(hero.shape:getPoints()))
         love.graphics.setColor(0, 0, 0)
         love.graphics.polygon("line", hero.body:getWorldPoints(hero.shape:getPoints()))
+        
 
 		-- Temporarily draw a point at our location so we know
 		-- that our sprite is offset properly

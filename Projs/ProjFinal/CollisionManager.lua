@@ -22,8 +22,7 @@ function beginContact(a, b, coll)
     end
     
     -- Trata colisão do tiro
-    if (a:getUserData().properties.Ground == true and b:getUserData().properties.tag == "Shot" or
-        b:getUserData().properties.Ground == true and a:getUserData().properties.tag == "Shot") then
+    if (a:getUserData().properties.tag == "Shot" or b:getUserData().properties.tag == "Shot") then
         local shot
         if a:getUserData().properties.tag == "Shot" then
           shot = a:getUserData().properties
@@ -32,11 +31,27 @@ function beginContact(a, b, coll)
         end
         shot.remove()        
     end
+    
+    -- Trata colisão do player com moedas
+    if (a:getUserData().properties.tag == "Coin" and b:getUserData().properties.tag == "Hero" or
+        b:getUserData().properties.tag == "Coin" and a:getUserData().properties.tag == "Hero") then
+        local player
+        local coin
+        if a:getUserData().properties.tag == "Hero" then
+            player = a:getUserData().properties
+            coin = b:getUserData().properties
+        elseif b:getUserData().properties.tag == "Hero" then
+            player = b:getUserData().properties
+            coin = a:getUserData().properties
+        end
+        player.coins = player.coins + 1
+        coin.remove()
+    end
 
 end
 
 function endContact(a, b, coll)
-
+    
 end
 
 function preSolve(a, b, coll)
@@ -44,7 +59,7 @@ function preSolve(a, b, coll)
 end
 
 function postSolve(a, b, coll, normalimpulse, tangentimpulse)
-
+    
 end
 
 return CollisionManager
