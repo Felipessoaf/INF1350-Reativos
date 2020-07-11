@@ -44,6 +44,7 @@ function Player.Init(spawnName, color)
     hero.direction = 0
     hero.jumpCount = 2
     hero.color = color
+    hero.originalColor = color
     hero.shotDirection = 1
     hero.coins = 0
     hero.health = 100
@@ -111,9 +112,9 @@ function Player.Init(spawnName, color)
         elseif msg == "lum" then
             local lumValue = tonumber(split[2])
             if lumValue < 10 then
-                hero.color = {0,0,0}
+                hero.color = {52/255, 82/255, 28/255}
             elseif lumValue >= 10 then
-                hero.color = {1,1,1}
+                hero.color = hero.originalColor
             end
 
             MagicPlat.UpdateValue(lumValue)
