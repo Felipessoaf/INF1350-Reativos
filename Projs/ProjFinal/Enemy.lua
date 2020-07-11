@@ -29,19 +29,14 @@ function Enemy.Init()
             love.graphics.setColor(0, 0, 0)
             love.graphics.polygon("line", enemy.body:getWorldPoints(enemy.shape:getPoints()))
         end
-          
-		-- Temporarily draw a point at our location so we know
-		-- that our sprite is offset properly
-		-- love.graphics.setPointSize(5)
-		-- love.graphics.points(math.floor(self.hero.body:getX()), math.floor(self.hero.body:getY()))
     end
     
 end
 
 function Enemy.update(dt)
-  for enemy, _ in pairs(Enemy.enemies) do
-    enemy.update(dt)
-  end
+    for enemy, _ in pairs(Enemy.enemies) do
+        enemy.update(dt)
+    end
 end
 
 function Enemy.Create(x,y)
@@ -71,20 +66,18 @@ function Enemy.Create(x,y)
     enemy.update = function(dt)
         local currentTime = love.timer:getTime()
         if currentTime > enemy.shotTime + enemy.nextShotInterval then
-          Shot.Create(enemy.body:getX(), enemy.body:getY(), {1,0,1}, hero.body:getX() < enemy.body:getX() and -1 or 1, "EnemyShot")
-          enemy.shotTime = currentTime
-          enemy.nextShotInterval = math.random()*2
-          mqtt_client_controller:publish("paranodeFG", "enemyShot")
+            Shot.Create(enemy.body:getX(), enemy.body:getY(), {1,0,1}, hero.body:getX() < enemy.body:getX() and -1 or 1, "EnemyShot")
+            enemy.shotTime = currentTime
+            enemy.nextShotInterval = math.random()*2
+            mqtt_client_controller:publish("paranodeFG", "enemyShot")
         end
     end
     
     enemy.remove = function()
-      Enemy.enemies[enemy] = nil
+        Enemy.enemies[enemy] = nil
     end
-    
-    
-    Enemy.enemies[enemy] = true
-    
+        
+    Enemy.enemies[enemy] = true    
   end
   
   return Enemy

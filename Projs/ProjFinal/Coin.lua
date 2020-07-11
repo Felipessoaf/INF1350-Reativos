@@ -19,8 +19,7 @@ function Coin.Init()
     end
 
 	-- Draw player
-    coinLayer.draw = function(self)
-        
+    coinLayer.draw = function(self)        
         for coin, _ in pairs(Coin.moedas) do
             local cx, cy = coin.body:getWorldPoints(coin.shape:getPoint())
             love.graphics.setColor(unpack(coin.color))
@@ -28,13 +27,7 @@ function Coin.Init()
             love.graphics.setColor(0, 0, 0)
             love.graphics.circle("line", cx, cy, coin.shape:getRadius())
         end
-          
-		-- Temporarily draw a point at our location so we know
-		-- that our sprite is offset properly
-		-- love.graphics.setPointSize(5)
-		-- love.graphics.points(math.floor(self.hero.body:getX()), math.floor(self.hero.body:getY()))
-    end
-    
+    end    
 end
 
 function Coin.Create(x,y)
@@ -63,11 +56,9 @@ function Coin.Create(x,y)
     coin.remove = function()
       Coin.moedas[coin] = nil
       --coin.body:setActive(false)
-    end
+    end    
     
-    
-    Coin.moedas[coin] = true
-    
+    Coin.moedas[coin] = true    
   end
   
   return Coin

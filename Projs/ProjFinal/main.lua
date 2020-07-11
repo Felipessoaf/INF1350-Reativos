@@ -71,10 +71,10 @@ function love.load()
     CollisionManager.Init()
     
     --MQTT for controller
-     mqtt_client_controller = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
-     mqtt_client_controller = mqtt.client.create("localhost", 1883, mqttcb)
-     mqtt_client_controller:connect(clientName[onlineId])
-     mqtt_client_controller:subscribe({"paraloveFG"})
+    mqtt_client_controller = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
+    -- mqtt_client_controller = mqtt.client.create("localhost", 1883, mqttcb)
+    mqtt_client_controller:connect(clientName[onlineId])
+    mqtt_client_controller:subscribe({"paraloveFG"})
 
     --MQTT for online
     mqtt_client_online = mqtt.client.create("broker.hivemq.com", 1883, mqttcb)
@@ -100,7 +100,7 @@ function love.update(dt)
     Enemy.update(dt)
 
     -- mqtt handler
-    -- mqtt_client_controller:handler()
+    mqtt_client_controller:handler()
     mqtt_client_online:handler()
 end
 
@@ -132,7 +132,7 @@ function love.draw()
 	love.graphics.setColor(1, 0, 0)
 	map:box2d_draw(tx,ty)
   
-  -- Texto player
+    -- Texto player
     local text = "Moedas: "..tostring(hero.coins)
     love.graphics.setColor(1, 1, 1)
     font = love.graphics.setNewFont(20)
@@ -141,13 +141,12 @@ function love.draw()
     love.graphics.setColor(255,0,0,255)
     love.graphics.rectangle("fill", 20, 20, hero.health, 20)
     love.graphics.setColor(0,0,0,255)
-    love.graphics.rectangle("line", 20, 20, 100, 20)
-    
+    love.graphics.rectangle("line", 20, 20, 100, 20)    
 end
 
 function splitString(inputstr, sep)
     if sep == nil then
-            sep = "%s"
+        sep = "%s"
     end
     
     local t={}

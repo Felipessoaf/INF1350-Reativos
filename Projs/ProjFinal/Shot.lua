@@ -12,27 +12,20 @@ function Shot.Init()
     Shot.shots = {}
 
 	-- Draw player
-    shotLayer.draw = function(self)
-        
+    shotLayer.draw = function(self)        
         for shot, _ in pairs(Shot.shots) do
             love.graphics.setColor(unpack(shot.color))
             love.graphics.polygon("fill", shot.body:getWorldPoints(shot.shape:getPoints()))
             love.graphics.setColor(0, 0, 0)
             love.graphics.polygon("line", shot.body:getWorldPoints(shot.shape:getPoints()))
         end
-          
-		-- Temporarily draw a point at our location so we know
-		-- that our sprite is offset properly
-		-- love.graphics.setPointSize(5)
-		-- love.graphics.points(math.floor(self.hero.body:getX()), math.floor(self.hero.body:getY()))
-    end
-    
+    end    
 end
 
 function Shot.update(dt)
-  for shot, _ in pairs(Shot.shots) do
-    shot.update(dt)
-  end
+    for shot, _ in pairs(Shot.shots) do
+        shot.update(dt)
+    end
 end
 
 function Shot.Create(x, y, color, direction, tag)
@@ -63,11 +56,11 @@ function Shot.Create(x, y, color, direction, tag)
     
     -- Functions
     shot.update = function(dt)
-      shot.body:setLinearVelocity(shot.speed*shot.direction, 0)
+        shot.body:setLinearVelocity(shot.speed*shot.direction, 0)
     end
     
     shot.remove = function()
-      Shot.shots[shot] = nil
+        Shot.shots[shot] = nil
     end    
     
     Shot.shots[shot] = true    

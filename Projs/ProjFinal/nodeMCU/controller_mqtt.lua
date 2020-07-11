@@ -69,33 +69,27 @@ function publica(c, m)
 end
 
 function novaInscricao (c)
-  local msgsrec = 0
-  local aceso1 = true
-  local aceso2 = true
+    local msgsrec = 0
+    local aceso1 = true
+    local aceso2 = true
 
-  local function novamsg (c, t, m)
-    print ("mensagem ".. msgsrec .. ", topico: ".. t .. ", dados: " .. m)
-    msgsrec = msgsrec + 1
+    local function novamsg (c, t, m)
+        print ("mensagem ".. msgsrec .. ", topico: ".. t .. ", dados: " .. m)
+        msgsrec = msgsrec + 1
+        
+        -- Beeps
+        if m == "jump" then
+            beep(500, 100)
+        elseif m == "shot" then
+            beep(500,50)
+        elseif m == "coin" then
+            beep(500, 300)
+        elseif m == "enemyShot" then
+            beep(500, 50)
+        end
     
-    -- Beeps
-    if m == "jump" then
-        beep(500, 100)
     end
-    
-    if m == "shot" then
-        beep(500,50)
-    end
-    
-    if m == "coin" then
-        beep(500, 300)
-    end
-    
-    if m == "enemyShot" then
-        beep(500, 50)
-    end
-    
-  end
-  c:on("message", novamsg)
+    c:on("message", novamsg)
 end
 
 function sendButton(action)
@@ -220,14 +214,7 @@ local function receiver(sck, request)
     end
 
     buf = string.gsub(buf, "###", "")
-
     
-    -- <p>PISCA LED 1: $STLED1  <a href="?pin=LIGA1"><button><b>ON</b></button></a>
-    -- <a href="?pin=DESLIGA1"><button><b>OFF</b></button></a></p>
-    -- <p>PISCA LED 2: $STLED2  <a href="?pin=LIGA2"><button><b>ON</b></button></a>
-    -- <a href="?pin=DESLIGA2"><button><b>OFF</b></button></a></p>
-
-
     buf = string.gsub(buf, "$(%w+)", vals)
     sck:send(buf, 
             function()  -- callback: fecha o socket qdo acabar de enviar resposta

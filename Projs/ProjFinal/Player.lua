@@ -84,7 +84,11 @@ function Player.Init()
         love.load()
       end
     end
-    
+
+    hero.shoot = function()
+        Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection, "PlayerShot")
+        mqtt_client_controller:publish("paranodeFG", "shot")
+    end    
     
     hero.newMessage = function (message)
         local split = splitString(message, ":")
@@ -99,8 +103,7 @@ function Player.Init()
         elseif msg == "btn3" and hero.jumpCount > 0 then
             hero.jump()
         elseif msg == "btn4" then
-          Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection, "PlayerShot")
-          mqtt_client_controller:publish("paranodeFG", "shot")
+            hero.shoot()
         elseif msg == "lum" then
             local lumValue = tonumber(split[2])
             if lumValue < 50 then
@@ -121,16 +124,16 @@ function Player.Init()
            hero.move(keyMap[key])
         end
         if key == 'w' and hero.jumpCount > 0 then
-          hero.jump()
+            hero.jump()
         end
         if key == 'space' then
-          Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection, "PlayerShot")
+            Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection, "PlayerShot")
         end
     end
 
     hero.keyreleased = function (key)
         if key == 'a' or key == 'd' then
-           hero.move(0)
+            hero.move(0)
         end
     end
 

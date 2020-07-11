@@ -26,11 +26,11 @@ function beginContact(a, b, coll)
         local shot
         local other
         if a:getUserData().properties.tag == "PlayerShot" then
-          shot = a:getUserData().properties
-          other = b:getUserData().properties
+            shot = a:getUserData().properties
+            other = b:getUserData().properties
         elseif b:getUserData().properties.tag == "PlayerShot" then
-          shot = b:getUserData().properties
-          other = a:getUserData().properties
+            shot = b:getUserData().properties
+            other = a:getUserData().properties
         end
 
         if other.tag ~= "Hero" and other.tag ~= "Coin" then
@@ -46,18 +46,18 @@ function beginContact(a, b, coll)
         local shot
         local other
         if a:getUserData().properties.tag == "EnemyShot" then
-          shot = a:getUserData().properties
-          other = b:getUserData().properties
+            shot = a:getUserData().properties
+            other = b:getUserData().properties
         elseif b:getUserData().properties.tag == "EnemyShot" then
-          shot = b:getUserData().properties
-          other = a:getUserData().properties
+            shot = b:getUserData().properties
+            other = a:getUserData().properties
         end
 
         if other.tag ~= "Enemy" and other.tag ~= "Coin" then
             shot.remove()        
         end
         if other.tag == "Hero" then
-          hero.damage(10)
+            hero.damage(10)
         end
     end
     
