@@ -79,11 +79,11 @@ function novaInscricao (c)
         
         -- Beeps
         if m == "jump" then
-            beep(500, 100)
+            beep(500, 50)
         elseif m == "shot" then
-            beep(500,50)
+            beep(600, 50)
         elseif m == "coin" then
-            beep(500, 300)
+            beep(800, 50)
         elseif m == "enemyShot" then
             beep(500, 50)
         end

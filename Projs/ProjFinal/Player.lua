@@ -133,7 +133,7 @@ function Player.Init(spawnName, color)
             hero.jump()
         end
         if key == 'space' then
-            Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection, "PlayerShot")
+            hero.shoot()
         end
     end
 
