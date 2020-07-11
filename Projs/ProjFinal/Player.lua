@@ -100,7 +100,7 @@ function Player.Init()
             hero.jump()
         elseif msg == "btn4" then
           Shot.Create(hero.body:getX(), hero.body:getY(), {1,1,1}, hero.shotDirection, "PlayerShot")
-          mqtt_client_controller:publish("paranodeFG", "jump")
+          mqtt_client_controller:publish("paranodeFG", "shot")
         elseif msg == "lum" then
             local lumValue = tonumber(split[2])
             if lumValue < 50 then
