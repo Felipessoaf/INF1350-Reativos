@@ -8,10 +8,10 @@ local Shot = {}
 
 function Shot.Init()
    -- Create new dynamic data layer
-    local shotLayer = map:addCustomLayer(Layers.shot.name, Layers.shot.number)	
+    local shotLayer = map:addCustomLayer(Layers.shot.name, Layers.shot.number)
+
     Shot.shots = {}
 
-	-- Draw player
     shotLayer.draw = function(self)        
         for shot, _ in pairs(Shot.shots) do
             love.graphics.setColor(unpack(shot.color))

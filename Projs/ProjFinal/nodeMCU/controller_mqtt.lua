@@ -138,8 +138,8 @@ function conectado (newclient)
     end)
 end 
 
--- m:connect("broker.hivemq.com", 1883, false, 
-m:connect("192.168.1.106", 1883, false, 
+m:connect("broker.hivemq.com", 1883, false, 
+-- m:connect("192.168.1.106", 1883, false, 
             conectado,
             function(client, reason) 
                 print("failed reason: "..reason) 
@@ -214,7 +214,7 @@ local function receiver(sck, request)
     end
 
     buf = string.gsub(buf, "###", "")
-    
+
     buf = string.gsub(buf, "$(%w+)", vals)
     sck:send(buf, 
             function()  -- callback: fecha o socket qdo acabar de enviar resposta
@@ -234,7 +234,3 @@ end
 addr, port = srv:getaddr()
 print(addr, port)
 print("servidor inicializado.")
-
--- local mytimer = tmr.create()
--- mytimer:register(1000, tmr.ALARM_AUTO, piscapisca)
--- mytimer:start()

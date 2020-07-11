@@ -138,18 +138,11 @@ function Player.Init()
     end
 
 	-- Draw player
-    playerLayer.draw = function(self)
-        
+    playerLayer.draw = function(self)        
         love.graphics.setColor(unpack(hero.color))
         love.graphics.polygon("fill", hero.body:getWorldPoints(hero.shape:getPoints()))
         love.graphics.setColor(0, 0, 0)
         love.graphics.polygon("line", hero.body:getWorldPoints(hero.shape:getPoints()))
-        
-
-		-- Temporarily draw a point at our location so we know
-		-- that our sprite is offset properly
-		-- love.graphics.setPointSize(5)
-		-- love.graphics.points(math.floor(self.hero.body:getX()), math.floor(self.hero.body:getY()))
     end
     
 	-- Remove unneeded object layer

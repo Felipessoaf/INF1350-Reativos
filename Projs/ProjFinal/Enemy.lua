@@ -20,9 +20,7 @@ function Enemy.Init()
         end
     end
 
-	-- Draw player
-    enemyLayer.draw = function(self)
-        
+    enemyLayer.draw = function(self)        
         for enemy, _ in pairs(Enemy.enemies) do
             love.graphics.setColor(unpack(enemy.color))
             love.graphics.polygon("fill", enemy.body:getWorldPoints(enemy.shape:getPoints()))
@@ -48,7 +46,7 @@ function Enemy.Create(x,y)
     enemy.initY = y
     enemy.width = 20
     enemy.height = 40
-    enemy.color = {1,0,0}
+    enemy.color = {247/255, 153/255, 0}
     enemy.shotTime = 0
     enemy.nextShotInterval = math.random()
     

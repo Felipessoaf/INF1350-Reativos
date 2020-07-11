@@ -18,7 +18,6 @@ function Coin.Init()
         end
     end
 
-	-- Draw player
     coinLayer.draw = function(self)        
         for coin, _ in pairs(Coin.moedas) do
             local cx, cy = coin.body:getWorldPoints(coin.shape:getPoint())
@@ -54,8 +53,8 @@ function Coin.Create(x,y)
     
     -- Functions    
     coin.remove = function()
-      Coin.moedas[coin] = nil
-      --coin.body:setActive(false)
+        Coin.moedas[coin] = nil
+        --coin.body:setActive(false)
     end    
     
     Coin.moedas[coin] = true    

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.5" orientation="orthogonal" renderorder="left-up" compressionlevel="0" width="150" height="70" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="22">
+<map version="1.2" tiledversion="1.3.2" orientation="orthogonal" renderorder="left-up" compressionlevel="0" width="150" height="70" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="38">
  <editorsettings>
   <export target="mainMap.lua" format="lua"/>
  </editorsettings>
@@ -492,8 +492,23 @@
  </layer>
  <objectgroup id="3" name="spawn">
   <object id="3" name="spawnPoint" x="1358.67" y="1313.33"/>
-  <object id="20" name="coinSpawn" x="1496" y="1318.67" height="1.33333"/>
-  <object id="21" name="enemySpawn" x="1568" y="1322.67"/>
+  <object id="20" name="coinSpawn" x="1572" y="1319.67"/>
+  <object id="21" name="enemySpawn" x="1969" y="1128.67"/>
+  <object id="22" name="coinSpawn" x="2615" y="1325"/>
+  <object id="23" name="coinSpawn" x="2611" y="1161"/>
+  <object id="24" name="coinSpawn" x="1345" y="812"/>
+  <object id="25" name="coinSpawn" x="1371" y="1032"/>
+  <object id="26" name="coinSpawn" x="1522" y="932"/>
+  <object id="27" name="coinSpawn" x="1711" y="1025"/>
+  <object id="28" name="enemySpawn" x="1535" y="1024"/>
+  <object id="29" name="enemySpawn" x="2419" y="1252"/>
+  <object id="30" name="enemySpawn" x="2400" y="1028"/>
+  <object id="31" name="enemySpawn" x="2384" y="801"/>
+  <object id="32" name="enemySpawn" x="1570" y="809"/>
+  <object id="34" name="coinSpawn" x="2613" y="803"/>
+  <object id="35" name="coinSpawn" x="2045" y="833"/>
+  <object id="36" name="platSpawn" x="1902" y="966"/>
+  <object id="37" name="platSpawn" x="2181" y="964"/>
  </objectgroup>
  <layer id="2" name="ground" width="150" height="70">
   <properties>
