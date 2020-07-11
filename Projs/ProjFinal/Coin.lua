@@ -29,6 +29,15 @@ function Coin.Init()
     end    
 end
 
+function Coin.update(dt)
+    for coin, state in pairs(Coin.moedas) do
+        if state == false then
+            coin.body:setActive(false)
+            Coin.moedas[coin] = nil
+        end
+    end
+end
+
 function Coin.Create(x,y)
 	local coin = {}
 
@@ -53,8 +62,7 @@ function Coin.Create(x,y)
     
     -- Functions    
     coin.remove = function()
-        Coin.moedas[coin] = nil
-        --coin.body:setActive(false)
+        Coin.moedas[coin] = false
     end    
     
     Coin.moedas[coin] = true    

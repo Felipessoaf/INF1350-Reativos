@@ -32,8 +32,13 @@ function Enemy.Init()
 end
 
 function Enemy.update(dt)
-    for enemy, _ in pairs(Enemy.enemies) do
-        enemy.update(dt)
+    for enemy, state in pairs(Enemy.enemies) do
+        if state == false then
+            enemy.body:setActive(false)
+            Enemy.enemies[enemy] = nil
+        else
+            enemy.update(dt)
+        end
     end
 end
 
@@ -73,7 +78,7 @@ function Enemy.Create(x,y)
     end
     
     enemy.remove = function()
-        Enemy.enemies[enemy] = nil
+        Enemy.enemies[enemy] = false
     end
         
     Enemy.enemies[enemy] = true    
