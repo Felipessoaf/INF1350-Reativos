@@ -22,23 +22,30 @@ local Coin = require 'Coin'
 -- Enemy module
 local Enemy = require 'Enemy'
 
+-- MagicPlat module
+local MagicPlat = require 'MagicPlat'
+
 local onlineIds = {}
 onlineIds[1] = {
         name = "cliente love FG online 1",
         sub = "paraloveFG Online 1",
-        send = "paraloveFG Online 2"
+        send = "paraloveFG Online 2",
+        spawnMain = "spawnPoint1",
+        spawnPlayer2 = "spawnPoint2"
     }
 onlineIds[2] = {
         name = "cliente love FG online 2",
         sub = "paraloveFG Online 2",
-        send = "paraloveFG Online 1"
+        send = "paraloveFG Online 1",
+        spawnMain = "spawnPoint2",
+        spawnPlayer2 = "spawnPoint1"
     }
 
 local clientName = {}
 clientName[1] = "cliente love FG 1"
 clientName[2] = "cliente love FG 2"
 
-local onlineId = 2
+local onlineId = 1
   
 local function mqttcb (topic, msg)
     if topic == "paraloveFG" then
@@ -59,14 +66,16 @@ function love.load()
 	-- load map
 	map, world = MapManager.InitMap()
 
-    hero = Player.Init()
-    player2 = Player.Init()
+    hero = Player.Init(onlineIds[onlineId].spawnMain, {117/255, 186/255, 60/255})
+    player2 = Player.Init(onlineIds[onlineId].spawnPlayer2, {196/255, 242/255, 157/255})
     
     Shot.Init()
     
     Coin.Init()
     
     Enemy.Init()
+    
+    MagicPlat.Init()
 
     CollisionManager.Init()
     
@@ -129,8 +138,8 @@ function love.draw()
 	map:draw(tx,ty)
 
 	-- Draw Collision Map (useful for debugging)
-	love.graphics.setColor(1, 0, 0)
-	map:box2d_draw(tx,ty)
+	-- love.graphics.setColor(1, 0, 0)
+	-- map:box2d_draw(tx,ty)
   
     -- Texto player
     local text = "Moedas: "..tostring(hero.coins)

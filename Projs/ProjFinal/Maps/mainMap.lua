@@ -9,7 +9,7 @@ return {
   tilewidth = 32,
   tileheight = 32,
   nextlayerid = 9,
-  nextobjectid = 38,
+  nextobjectid = 39,
   properties = {},
   tilesets = {
     {
@@ -619,7 +619,7 @@ return {
       objects = {
         {
           id = 3,
-          name = "spawnPoint",
+          name = "spawnPoint1",
           type = "",
           shape = "rectangle",
           x = 1358.67,
@@ -830,8 +830,8 @@ return {
           name = "platSpawn",
           type = "",
           shape = "rectangle",
-          x = 1902,
-          y = 966,
+          x = 1476,
+          y = 1314,
           width = 0,
           height = 0,
           rotation = 0,
@@ -845,6 +845,19 @@ return {
           shape = "rectangle",
           x = 2181,
           y = 964,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 38,
+          name = "spawnPoint2",
+          type = "",
+          shape = "rectangle",
+          x = 1404,
+          y = 1314,
           width = 0,
           height = 0,
           rotation = 0,

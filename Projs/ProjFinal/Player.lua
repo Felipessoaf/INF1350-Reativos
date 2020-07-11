@@ -4,7 +4,11 @@
 -- Layers module
 local Layers = require 'Layers'
 
+-- Shot module
 local Shot = require 'Shot'
+
+-- MagicPlat module
+local MagicPlat = require 'MagicPlat'
 
 local Player = {}
 
@@ -14,14 +18,14 @@ local keyMap = {
   d = 1
 }
 
-function Player.Init()
+function Player.Init(spawnName, color)
    -- Create new dynamic data layer
     local playerLayer = map:addCustomLayer(Layers.player.name, Layers.player.number)
 
 	-- Get player spawn object
 	local spawn
 	for k, object in pairs(map.objects) do
-		if object.name == "spawnPoint" then
+		if object.name == spawnName then
 			spawn = object
 			break
 		end
@@ -39,7 +43,7 @@ function Player.Init()
     hero.speed = 150
     hero.direction = 0
     hero.jumpCount = 2
-    hero.color = {117/255, 186/255, 60/255}
+    hero.color = color
     hero.shotDirection = 1
     hero.coins = 0
     hero.health = 100
@@ -106,11 +110,13 @@ function Player.Init()
             hero.shoot()
         elseif msg == "lum" then
             local lumValue = tonumber(split[2])
-            if lumValue < 50 then
+            if lumValue < 10 then
                 hero.color = {0,0,0}
-            elseif lumValue >= 50 then
+            elseif lumValue >= 10 then
                 hero.color = {1,1,1}
             end
+
+            MagicPlat.UpdateValue(lumValue)
         end
     end
 

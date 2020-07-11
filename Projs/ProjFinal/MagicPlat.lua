@@ -20,12 +20,20 @@ function MagicPlat.Init()
 
     platsLayer.draw = function(self)        
         for plat, _ in pairs(MagicPlat.plats) do
-            love.graphics.setColor(unpack(plat.color))
-            love.graphics.polygon("fill", plat.body:getWorldPoints(plat.shape:getPoints()))
-            love.graphics.setColor(198/255, 130/255, 250/255, 0.5)
-            love.graphics.polygon("line", plat.body:getWorldPoints(plat.shape:getPoints()))
+            if not plat.hidden then
+                love.graphics.setColor(unpack(plat.color))
+                love.graphics.polygon("fill", plat.body:getWorldPoints(plat.shape:getPoints()))
+                love.graphics.setColor(198/255, 130/255, 250/255, 0.5)
+                love.graphics.polygon("line", plat.body:getWorldPoints(plat.shape:getPoints()))
+            end
         end
     end    
+end
+
+function MagicPlat.UpdateValue(val)  
+    for plat, _ in pairs(MagicPlat.plats) do
+        plat.newValue(val)
+    end
 end
 
 function MagicPlat.Create(x,y)
@@ -35,13 +43,15 @@ function MagicPlat.Create(x,y)
     plat.tag = "plat"
     plat.initX = x
     plat.initY = y
-    plat.width = 20
-    plat.height = 40
+    plat.width = 40
+    plat.height = 20
     plat.color = {178/255, 77/255, 1, 0.5}
+    plat.hidden = false
     
 	-- Physics
     plat.body = love.physics.newBody(world, plat.initX, plat.initY, "static")
     plat.body:setFixedRotation(true)
+    plat.body:setGravityScale(0)
     
     plat.shape = love.physics.newRectangleShape(plat.width, plat.height)
     
@@ -51,10 +61,16 @@ function MagicPlat.Create(x,y)
     
     -- Functions
     plat.newValue = function(val)
-        plat.body:setActive(val < 10 and false or true)
+        if val < 10 then
+            plat.body:setActive(true)
+            plat.hidden = false
+        else
+            plat.body:setActive(false)
+            plat.hidden = true
+        end
     end    
     
     MagicPlat.plats[plat] = true    
   end
   
-  return Coin
+  return MagicPlat
