@@ -46,6 +46,8 @@ clientName[1] = "cliente love FG 1"
 clientName[2] = "cliente love FG 2"
 
 local onlineId = 1
+
+GameState = 0
   
 local function mqttcb (topic, msg)
     if topic == "paraloveFG" then
@@ -63,6 +65,8 @@ end
 
 -- Declare initial state of game
 function love.load()
+    GameState = 0
+
 	-- load map
 	map, world = MapManager.InitMap()
 
@@ -92,68 +96,98 @@ function love.load()
 end
 
 function love.update(dt)
-    -- Update world
-    world:update(dt) 
-	
-	-- Update world map
-    map:update(dt)
-    
-    -- Updates Player
-    hero.update(dt)
-    player2.update(dt)
-    
-    -- Updates Shot
-    Shot.update(dt)
-    
-    -- Updates Coin
-    Coin.update(dt)
-    
-    -- Updates Enemy
-    Enemy.update(dt)
+    if GameState == 0 then
+        -- Update world
+        world:update(dt) 
+        
+        -- Update world map
+        map:update(dt)
+        
+        -- Updates Player
+        hero.update(dt)
+        player2.update(dt)
+        
+        -- Updates Shot
+        Shot.update(dt)
+        
+        -- Updates Coin
+        Coin.update(dt)
+        
+        -- Updates Enemy
+        Enemy.update(dt)
 
-    -- mqtt handler
-    mqtt_client_controller:handler()
-    mqtt_client_online:handler()
+        -- mqtt handler
+        mqtt_client_controller:handler()
+        mqtt_client_online:handler()
+    end
 end
 
 function love.keyreleased(key)
-    -- Sends to Player
-    hero.keyreleased(key)
+    if GameState == 0 then
+        -- Sends to Player
+        hero.keyreleased(key)
 
-    -- Manda keyreleased para o node
-    mqtt_client_online:publish(onlineIds[onlineId].send, "keyreleased:"..key)
+        -- Manda keyreleased para o node
+        mqtt_client_online:publish(onlineIds[onlineId].send, "keyreleased:"..key)
+    end
 end
 
 function love.keypressed(key)
-    -- Sends to Player
-    hero.keypressed(key)
+    if GameState == 0 then
+        -- Sends to Player
+        hero.keypressed(key)
 
-    -- Manda keypressed para o node
-    mqtt_client_online:publish(onlineIds[onlineId].send, "keypressed:"..key)
+        -- Manda keypressed para o node
+        mqtt_client_online:publish(onlineIds[onlineId].send, "keypressed:"..key)
+    elseif GameState == 1 then
+        if key == "return" then
+            love.load()
+        end
+    end
 end
 
-function love.draw()
-    heroPosX, heroPosY = hero.body:getPosition();
-    local tx,ty = -heroPosX + love.graphics.getWidth()/2, -heroPosY + love.graphics.getHeight() * 3/4;
-	
-    -- Draw world
-	love.graphics.setColor(1, 1, 1)
-	map:draw(tx,ty)
+function love.draw()    
+    if GameState == 0 then
+        heroPosX, heroPosY = hero.body:getPosition();
+        local tx,ty = -heroPosX + love.graphics.getWidth()/2, -heroPosY + love.graphics.getHeight() * 3/4;
+        
+        -- Draw world
+        love.graphics.setColor(1, 1, 1)
+        map:draw(tx,ty)
 
-	-- Draw Collision Map (useful for debugging)
-	-- love.graphics.setColor(1, 0, 0)
-	-- map:box2d_draw(tx,ty)
-  
-    -- Texto player
-    local text = "Moedas: "..tostring(hero.coins)
-    love.graphics.setColor(1, 1, 1)
-    font = love.graphics.setNewFont(20)
-    love.graphics.print(text, love.graphics.getWidth()/2 - font:getWidth(text)/2, 20)
+        -- Draw Collision Map (useful for debugging)
+        -- love.graphics.setColor(1, 0, 0)
+        -- map:box2d_draw(tx,ty)
     
-    love.graphics.setColor(255,0,0,255)
-    love.graphics.rectangle("fill", 20, 20, hero.health, 20)
-    love.graphics.setColor(0,0,0,255)
-    love.graphics.rectangle("line", 20, 20, 100, 20)    
+        -- Texto player
+        local text = "Moedas: "..tostring(hero.coins)
+        love.graphics.setColor(1, 1, 1)
+        font = love.graphics.setNewFont(20)
+        love.graphics.print(text, love.graphics.getWidth()/2 - font:getWidth(text)/2, 20)
+        
+        love.graphics.setColor(255,0,0,255)
+        love.graphics.rectangle("fill", 20, 20, hero.health, 20)
+        love.graphics.setColor(0,0,0,255)
+        love.graphics.rectangle("line", 20, 20, 100, 20)
+    elseif GameState == 1 then
+        -- Texto gameover
+        local text = "Game Over"
+        love.graphics.setColor(1, 1, 1)
+        font = love.graphics.setNewFont(30)
+        love.graphics.print(text, love.graphics.getWidth()/2 - font:getWidth(text)/2, love.graphics.getHeight()/2 - font:getHeight(text)/2 - 100)
+
+        -- Texto moedas
+        local text = "Moedas: "..tostring(hero.coins)
+        love.graphics.setColor(1, 1, 1)
+        font = love.graphics.setNewFont(30)
+        love.graphics.print(text, love.graphics.getWidth()/2 - font:getWidth(text)/2, love.graphics.getHeight()/2 - font:getHeight(text)/2)
+        
+        -- Texto recomeçar
+        local text = "Aperte enter para recomeçar"
+        love.graphics.setColor(1, 1, 1)
+        font = love.graphics.setNewFont(30)
+        love.graphics.print(text, love.graphics.getWidth()/2 - font:getWidth(text)/2, love.graphics.getHeight()/2 - font:getHeight(text)/2 + 100)
+    end
 end
 
 function splitString(inputstr, sep)

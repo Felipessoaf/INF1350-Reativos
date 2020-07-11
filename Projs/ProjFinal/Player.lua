@@ -84,10 +84,10 @@ function Player.Init(spawnName, color)
     end
     
     hero.damage = function(dmg)
-      hero.health = hero.health - dmg
-      if hero.health <= 0 then
-        love.load()
-      end
+        hero.health = hero.health - dmg
+        if hero.health <= 0 then
+            GameState = 1
+        end
     end
 
     hero.shoot = function()
