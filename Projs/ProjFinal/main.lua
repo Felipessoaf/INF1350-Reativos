@@ -127,7 +127,7 @@ function love.keyreleased(key)
         -- Sends to Player
         hero.keyreleased(key)
 
-        -- Manda keyreleased para o node
+        -- Manda keyreleased para o love
         mqtt_client_online:publish(onlineIds[onlineId].send, "keyreleased:"..key)
     end
 end
@@ -137,7 +137,7 @@ function love.keypressed(key)
         -- Sends to Player
         hero.keypressed(key)
 
-        -- Manda keypressed para o node
+        -- Manda keypressed para o love
         mqtt_client_online:publish(onlineIds[onlineId].send, "keypressed:"..key)
     elseif GameState == 1 then
         if key == "return" then

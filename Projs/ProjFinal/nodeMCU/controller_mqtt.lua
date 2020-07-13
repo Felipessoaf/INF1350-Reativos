@@ -84,8 +84,6 @@ function novaInscricao (c)
             beep(600, 50)
         elseif m == "coin" then
             beep(800, 50)
-        elseif m == "enemyShot" then
-            beep(500, 50)
         end
     
     end
@@ -98,6 +96,13 @@ function sendButton(action)
     end
 end
 
+function insertMoveAndSend(msg)
+    table.insert(moves, msg)
+    sendButton(function ()
+        publica(client, msg)
+    end)
+end
+
 function conectado (newclient)
     print("conectado")
     
@@ -107,34 +112,22 @@ function conectado (newclient)
     --callback botoes
     gpio.trig(sw1, "both", function (level)
         local msg = level == 1 and "btn1_up" or "btn1_down"
-        table.insert(moves, msg)
-        sendButton(function ()
-            publica(client, msg)
-        end)
+        insertMoveAndSend(msg)
     end)
 
     gpio.trig(sw2, "both", function (level)
         local msg = level == 1 and "btn2_up" or "btn2_down"
-        table.insert(moves, msg)
-        sendButton(function ()
-            publica(client, msg)
-        end)
+        insertMoveAndSend(msg)
     end)
 
     gpio.trig(sw3, "down", function ()
         local msg = "btn3"
-        table.insert(moves, "btn3")
-        sendButton(function ()
-            publica(client, "btn3")
-        end)
+        insertMoveAndSend(msg)
     end)
 
     gpio.trig(sw4, "down",  function ()
         local msg = "btn4"
-        table.insert(moves, "btn4")
-        sendButton(function ()
-            publica(client, "btn4")
-        end)
+        insertMoveAndSend(msg)
     end)
 end 
 
